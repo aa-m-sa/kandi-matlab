@@ -25,7 +25,9 @@ numPics = length(picSetsLarge)
 
 picSets = {};
 for picInd = 1:numPics
-    picSets{picInd} = floor(picSetsLarge(picInd)/4);
+    largePicSet = picSetsLarge(picInd);
+    largePicSet = largePicSet{:}
+    picSets{picInd} = floor(largePicSet/4);
 end
 
 nDataCircles = zeros(1, numPics);
