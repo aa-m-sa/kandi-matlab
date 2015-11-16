@@ -1,6 +1,6 @@
 % test run with the fine-date basic version of annealing
 
-load('testdata-shared/testdatapics', 'dataSets', 'numPics', 'nDataCircles');
+load('testdata-shared/testdatapics.mat', 'dataSets', 'numPics', 'nDataCircles');
 
 % name of this scenario
 basename = 'basicf'
