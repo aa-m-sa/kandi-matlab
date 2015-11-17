@@ -1,6 +1,6 @@
 % function file for annealing algorithm
 
-function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, ratios] = annealing(data, nCircles)
+function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, ratios, annDataMarkovNo] = annealing(data, nCircles)
     % ANNEALING uses simulated annealing algorithm to find best fit for
     % a fixed number of 1-circles in a image data matrix
     %
@@ -76,6 +76,7 @@ function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, r
             annDataRadii(dk, :) = r;
             annDataTemps(dk) = t;
             annDataEnergies(dk) = e;
+            annDataMarkovNo(dk) = k;
 
             dk = dk + 1;
         end

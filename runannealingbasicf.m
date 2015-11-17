@@ -1,4 +1,5 @@
-% test run with the fine-date basic version of annealing
+% test run: basic version of annealing
+% (fine level of detail, each state stored)
 
 load('testdata-shared/testdatapics.mat', 'dataSets', 'numPics', 'nDataCircles');
 
@@ -38,7 +39,7 @@ for kpic = 1:numPics
         %
         [x, y, r,  ...
         annDataPoints, annDataRadii, annDataEnergies, annDataTemps, ...
-        ratios, annDataMarkovNo] = annealingbasicf(A_data, nCircles);
+        ratios, annDataMarkovNo] = annealing(A_data, nCircles);
 
         annDataLen = length(annDataEnergies);
 
