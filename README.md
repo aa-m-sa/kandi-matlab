@@ -1,12 +1,12 @@
 # Kandin koodit
 
-* Muutos 2015-11-15: Siirretty snapshot omaan repoonsa.
+* Muutos 2015-11-15: Siirretty koodit omaan Git-repoonsa (snapshot vanhasta
+reposta)
 
 * Matlab-yhteensopivaa Octave-koodia: SA-algoritmin toteutus
 
 * Kommentit ja koodi englanniksi (koodarin pinttynyt tapa: lähdekoodi on aina
-englanniksi); selvitä pitäisikö sen olla suomeksi jos (kun) se laittaa
-liitteenä kandintutkielmaan?
+englanniksi), dokumentaatio yleensä suomeksi
 
 ## Koodista
 
@@ -14,7 +14,7 @@ Projektin rakenne on seuraava:
 
 ### Algoritmi
 
-* `annealing.m` perusversio SA-algoritmin toteutuksesta
+* `annealing.m` perusversio SA-algoritmin toteutuksesta: funktio
 
 ### Apufunktiot jne
 
@@ -30,11 +30,13 @@ energiafunktiota varten
 * `addnoise.m` palauttaa parametrina annetusta kuvasta version johon lisätty
 tasajakautunutta kohinaa
 
+* TODO: hintafunktiot, jäähdytysskenaariot
+
 ### Testit
 
 * `testscript.m` sekalaista testausta
 
-* `testannealing.m`, `testannealing2.m`, jne. hieman formaalimpia
+* `testannealing.m`, `testannealing2.m`, jne. hieman hienompia
 testiskriptejä algoritmin toiminnan kokeilemiseen (luodaan erilaisia sarjoja
 testidataa, kokeillaan SA:ta niihin, printtaa kuvia)
 
@@ -50,14 +52,14 @@ nopeasti ympyrämatriisit luodaan eri `circle.m` toteutuksilla
 
 ## Formaalit testiskenaariot
 
-* perusbranch `matlab`
+* perusbranch `master`
 
 * jokaiselle skenaarion valmistelulle (`annealing.m`:n muokkaus) oma
 git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
 
 * jokaisella skenaariolla nimi: `runannealing(insertdescriptivename)`
     * ajettava skripti: `runannealing(name).m`
-    * käyttää `annealing.m`:n versiota `annealing(name).m`
+    * jokainen kutsuu `annealing.m` sopivin parametrein
     * tulokset (plottaukset, jne) tallennetaan kansioon `testdata-annealing(name)`
     * skenaarion kuvaus (mitä ko. versio algoritmista tekee;
     jäähdytysskenaariot, alkulämpötilat, jne): `runannealing(name).md`
@@ -69,7 +71,7 @@ git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
     vertailukelpoisuus
     * generoidaan skriptillä `preparetestdata.m`
 
-* skripti kaikkien skenaarioiden ajamiseksi: `runall`
+* skripti kaikkien skenaarioiden ajamiseksi: `runall` TODO
 
 ## Muuta
 
