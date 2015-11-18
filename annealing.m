@@ -10,12 +10,15 @@ function [x, y, r, ...
     % params:
     % data: image data matrix
     % nCircles: number of circles (parameter vectors x, y, r)
-    % annSettings: struct that defines functions
+    % (x,y,r are vectors (point for each circle))
+    % annSettings: struct that defines (required) functions
     % annSettings.temperature(old_temp)
     % annSettings.cost(x,y,r,data)
     % annSettings.transition(x,y,r,N,M)
     %
-    % x,y,r as vectors (point for each circle)
+    % (optional) params
+    % annSettings.temp_n : number of Markov chains (= how many times temp is decreased max)
+    % annSettings.markov_l: fixed length of a Markov chain
     %
     % returns:
     %
@@ -57,14 +60,22 @@ function [x, y, r, ...
     accepted = 0;
     transitions = 0;
 
-    n = 300;     % how many times temp is decreased?
+    if isfield(annSettings, 'temp_n')
+        n = annSettings.temp_n;
+    else
+        n = 300;     % default: how many times temp is decreased?
+    end
     k = 1;
 
     % data index
     dk = 1;
 
     % fixed markov chain length
-    l = 10;
+    if isfield(annSettings, 'markov_l')
+        l = markov_l;
+    else
+        l = 10;
+    end
     disp('start')
     % when ratios get low -> virtually no new accepted transitions
     while k < n && (k < 5 || sum(ratios(k-4:k-1)) > 0.2)
