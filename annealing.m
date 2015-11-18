@@ -1,12 +1,21 @@
 % function file for annealing algorithm
 
-function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, ratios, annDataMarkovNo] = annealing(data, nCircles)
+function [x, y, r, ...
+          annDataPoints, annDataRadii, ...
+          annDataEnergies, annDataTemps, ...
+          ratios, annDataMarkovNo] = annealing(data, nCircles, annSettings)
     % ANNEALING uses simulated annealing algorithm to find best fit for
     % a fixed number of 1-circles in a image data matrix
     %
     % params:
     % data: image data matrix
     % nCircles: number of circles (parameter vectors x, y, r)
+    % annSettings: struct that defines functions
+    % annSettings.temperature(old_temp)
+    % annSettings.cost(x,y,r,data)
+    % annSettings.transition(x,y,r,N,M)
+    %
+    % x,y,r as vectors (point for each circle)
     %
     % returns:
     %
@@ -22,6 +31,13 @@ function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, r
         % nCircles not specified
         nCircles = 1;
     end
+
+    % unpack functions
+    temperature = annSettings.temperature;
+    cost = annSettings.cost;
+    transition = annSettings.transition;
+
+
     % pick the initial state x0, y0, r0
     % large r that first circles will cover a sizeable part of image
     r = initialradius(N, M, nCircles);
@@ -35,7 +51,7 @@ function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, r
 
     % adjust temp so that the prob associated with the
     % 'initial mean energy delta' is close enough to 1
-    t = initialtemp(x, y, r, N, M, data);
+    t = initialtemp(x, y, r, N, M, data, cost, transition);
 
     % keep tally of acceptance ratio (for adjusting the initial t)
     accepted = 0;
@@ -107,36 +123,6 @@ function [x, y, r, annDataPoints, annDataRadii, annDataEnergies, annDataTemps, r
 
 end
 
-function y = cost(x, y, r, data)
-    % COST returns the value of the cost function (energy function) for
-    % given state (= params x, y, r). In practice, the cost function is
-    % the norm of difference between the image matrix and matrix created with
-    % the given set of parametres.
-
-    datasize = size(data);
-    N = datasize(1);
-    M = datasize(2);
-
-    A = circle(x, y, r, [N, M], 0, 1);
-    I = convolution(A);
-    % noise not necessary?
-    %I_noise = addnoise(I);
-
-    % our norm is \sigma_i \sigma_j |a(i,j)|^2 (Frobenius without sqrt)
-    % can be calculated easily with a little matrix wizardry:
-
-    d = I - data;
-    y = sum(diag(d' * d));
-    %y = norm(d, 'fro');
-    % in theory octave/matlab frobenius might be faster? in practise, doesn't
-    % seem so
-
-    % ^ the above method has some problems:
-    % if the param circle and data circle don't overlap, it doesn't
-    % distinguish two param sets even if another is much more 'close' to
-    % data circle than another
-
-end
 
 function r = initialradius(N, M, nCircles)
     % picks the initial radii (nCircles x 1 vector)
@@ -155,7 +141,7 @@ function [x, y] = initialcoord(N, M, nCircles)
     y = ceil(M*rand(nCircles, 1));
 end
 
-function t = initialtemp(x, y, r, N, M, data)
+function t = initialtemp(x, y, r, N, M, data, cost, transition)
     % picks the initial temperature
     % method: do some random transitions and calculate their respective energy
     % values.  Use them to estimate the mean energy difference, and pick such a
@@ -183,56 +169,6 @@ function t = initialtemp(x, y, r, N, M, data)
     q_0 = 0.9
     pr = -log(q_0)
     t = ceil(eMean / pr)
-end
-
-function tnew = temperature(told)
-    % TEMPERATURE is used to decrement temperature (control parameter)
-    % tnew = a*told, for some fixed a < 1
-
-    a = 0.98;
-
-    tnew = a.*told;
-
-end
-
-function [xnew, ynew, rnew] = transition(x, y, r, N, M)
-    % TRANSITION picks up a new circle configuration near the original x, y, r
-
-    % delta is the amount of change / transition distance
-    % if too small, takes too much time to find the circle in data; if too large, very imprecise
-    delta = max(M/15, N/15);     % a guess
-
-    % move just one circle at time
-    toMove = ceil(length(x)*rand);
-
-    % pick a new random r within delta from old of old r
-    baseChange = 2*rand - 1;
-    rnew = r;
-    rnew(toMove) = abs(delta*baseChange + r(toMove));
-    % but don't allow it to get too small or large
-    ri = rnew < max(N, M) / 50 | rnew > max(N, M);
-    rnew(ri) = r(ri);
-
-    % pick a random direction
-    dir = 2*pi*rand;
-    dx = delta * cos(dir);
-    dy = delta * sin(dir);
-
-    xnew = x;
-    ynew = y;
-    xnew(toMove) = round(x(toMove) + dx);
-    ynew(toMove) = round(y(toMove) + dy);
-
-    % instead of torus, boundaries
-    xis = xnew <= 0;
-    xnew(xis) = 1;
-    xil = xnew > N;
-    xnew(xil) = N;
-
-    yis = ynew <= 0;
-    ynew(yis) = 1;
-    yil = ynew > N;
-    ynew(yil) = N;
 end
 
 function y = prob(eNew, eOld, t)

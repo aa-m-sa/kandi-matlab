@@ -14,6 +14,11 @@ ensembleSize = 100
 
 nDataCircles
 
+% set up annSettings struct
+annSettings.temperature = @(told) basictemperature(told, 0.98);
+annSettings.transition  = @(x,y,r,N,M) basictransition(x,y,r,N,M, max(M/15, N/15));
+annSettings.cost        = @(x,y,r,data) basiccost(x,y,r,data,0,1);
+
 pause;
 
 for kpic = 1:numPics
@@ -40,7 +45,7 @@ for kpic = 1:numPics
         %
         [x, y, r,  ...
         annDataPoints, annDataRadii, annDataEnergies, annDataTemps, ...
-        ratios, annDataMarkovNo] = annealing(A_data, nCircles);
+        ratios, annDataMarkovNo] = annealing(A_data, nCircles, annSettings);
 
         annDataLen = length(annDataEnergies);
 
