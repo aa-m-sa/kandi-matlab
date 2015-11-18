@@ -16,9 +16,12 @@ function [x, y, r, ...
     % annSettings.cost(x,y,r,data)
     % annSettings.transition(x,y,r,N,M)
     %
-    % (optional) params
+    % (optional) params & functions
     % annSettings.temp_n : number of Markov chains (= how many times temp is decreased max)
     % annSettings.markov_l: fixed length of a Markov chain
+    % annSettings.freeze_cutoff(ratios, k): function that gets accepted /
+    %   transitions ratios for all Markv chains previous to current iteration k;
+    %   returns true when the system has 'frozen'
     %
     % returns:
     %
@@ -78,7 +81,16 @@ function [x, y, r, ...
     end
     disp('start')
     % when ratios get low -> virtually no new accepted transitions
-    while k < n && (k < 5 || sum(ratios(k-4:k-1)) > 0.2)
+    ratios = zeros(1,n);
+
+    if isfield(annSettings, 'freeze_cutoff')
+        freeze_cutoff = annSettings.freeze_cutoff;
+    else
+        % use fairly good default
+        freeze_cutoff = @(ratios, k) ~(k < 5 || sum(ratios(k-4:k-1)) > 0.2);
+    end
+
+    while k < n && ~freeze_cutoff(ratios, k)
         acceptedOld = accepted;
         transitionsOld = transitions;
         ePrev2 = ePrev;
