@@ -15,7 +15,7 @@ function runannealing(datapics_mat, basename, annSettings, nopause)
 
     % size of the 'ensemble'
     % i.e. the number of annealing algorithms run per testdata
-    if isfield(annSettings, ensembleSize)
+    if isfield(annSettings, 'ensembleSize')
         ensembleSize = annSettings.ensembleSize;
     else
         ensembleSize = 100
