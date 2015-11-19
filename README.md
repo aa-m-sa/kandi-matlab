@@ -59,8 +59,9 @@ git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
 
 * jokaisella skenaariolla nimi: `runannealing(insertdescriptivename)`
     * ajettava skripti: `runannealing(name).m`
-    * jokainen kutsuu `annealing.m` sopivin parametrein
-    * tulokset (plottaukset, jne) tallennetaan kansioon `testdata-annealing(name)`
+    * jokainen kutsuu `runannealing.m` sopivin parametrein, joka
+        * ajaa annealing ensemblen valitulla datalla
+        * tallentaa tulokset (plottaukset, jne)  kansioon `testdata-annealing(name)`
     * skenaarion kuvaus (mitä ko. versio algoritmista tekee;
     jäähdytysskenaariot, alkulämpötilat, jne): `runannealing(name).md`
 
@@ -71,7 +72,7 @@ git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
     vertailukelpoisuus
     * generoidaan skriptillä `preparetestdata.m`
 
-* skripti kaikkien skenaarioiden ajamiseksi: `runall` TODO
+* skripti kaikkien skenaarioiden ajamiseksi: `runall.m`
 
 ## Muuta
 
