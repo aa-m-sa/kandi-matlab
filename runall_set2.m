@@ -1,11 +1,5 @@
 % run annealing on datasets 2_*
 
-datapics1 = 'testdata-shared/testdata2_1.mat'
-datapics2 = 'testdata-shared/testdata2_2.mat'
-datapics3 = 'testdata-shared/testdata2_3.mat'
-datapics4 = 'testdata-shared/testdata2_4.mat'
-datapics5 = 'testdata-shared/testdata2_5.mat'
-
 annSettings_core.ensembleSize = 100
 annSettings_core.transition  = @(x,y,r,N,M) basictransition(x,y,r,N,M, max(M/15, N/15));
 annSettings_core.cost        = @(x,y,r,data) basiccost(x,y,r,data,0,1);
