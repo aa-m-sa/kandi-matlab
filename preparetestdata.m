@@ -21,29 +21,6 @@ pic11 = [80 66 11];
 
 % 'set' a.k.a. cell array
 picSets = {pic1; pic2; pic3; pic4; pic5; pic6; pic7; pic8; pic9; pic10; pic11}
-numPics = length(picSets)
-nDataCircles = zeros(1, numPics);
 
-dataSets = {};
-
-for picInd = 1:numPics
-    fighandle = figure('visible', 'off')
-    clf;
-    picSet = picSets(picInd);
-    picSet = picSet{:}
-    nDataCircles(picInd) = length(picSet(:, 1));
-    x = picSet(:, 1);
-    y = picSet(:, 2);
-    r = picSet(:, 3);
-
-    A_data = createdataimage(x, y, r, N, N);
-    imagesc(A_data)
-    colormap(gray)
-    axis image
-    dataSets{picInd} = A_data;
-
-    print(fighandle, ['testdata-images/testdata-pic-' num2str(picInd) '.png'], '-dpng')
-end
-
-save('testdata-shared/testdatapics', 'dataSets', 'numPics', 'nDataCircles');
+prepare(picSets, N, 'testdata-shared/testdatapics.mat', 'testdata-images/testdata-pic-', 1)
 

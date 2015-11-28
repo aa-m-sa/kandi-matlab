@@ -30,28 +30,4 @@ for picInd = 1:numPics
     picSets{picInd} = floor(largePicSet/4);
 end
 
-nDataCircles = zeros(1, numPics);
-
-dataSets = {};
-
-for picInd = 1:numPics
-    fighandle = figure('visible', 'off')
-    clf;
-    picSet = picSets(picInd);
-    picSet = picSet{:}
-    nDataCircles(picInd) = length(picSet(:, 1));
-    x = picSet(:, 1);
-    y = picSet(:, 2);
-    r = picSet(:, 3);
-
-    A_data = createdataimage(x, y, r, N, N);
-    imagesc(A_data)
-    colormap(gray)
-    axis image
-    dataSets{picInd} = A_data;
-
-    print(fighandle, ['testdata-images/testdata-small-pic-' num2str(picInd) '.png'], '-dpng')
-end
-
-save('testdata-shared/testdatapics_small.mat', 'dataSets', 'numPics', 'nDataCircles');
-
+prepare(picSets, N, 'testdata-shared/testdatapics_small.mat', 'testdata-images/testdata-small-pic-', 1)
