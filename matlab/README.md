@@ -1,12 +1,7 @@
-# Kandin koodit
+# Kandin Matlab-koodit
 
-* Muutos 2015-11-15: Siirretty koodit omaan Git-repoonsa (snapshot vanhasta
-reposta)
 
 * Matlab-yhteensopivaa Octave-koodia: SA-algoritmin toteutus
-
-* Kommentit ja koodi englanniksi (koodarin pinttynyt tapa: lähdekoodi on aina
-englanniksi), dokumentaatio yleensä suomeksi
 
 ## Koodista
 
@@ -64,15 +59,17 @@ git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
         * tallentaa tulokset (plottaukset, jne)  kansioon `testdata-annealing(name)`
     * skenaarion kuvaus (mitä ko. versio algoritmista tekee;
     jäähdytysskenaariot, alkulämpötilat, jne): `runannealing(name).md`
+    (jos tarpeen; yleensä .m -skripti ihan riittävän selkeä sinänsä)
 
 * skenaariolle yhteiset testidatat kansiossa `testdata-shared`
     * sarja valmiiksi generoituja testikuvia
     * testikuvat jne. kansiossa `testdata-images`
     * eri annealing-versioita (= skenaariot) kokeillaan samalle testidatalle ->
     vertailukelpoisuus
-    * generoidaan skriptillä `preparetestdata.m`
+    * eri testidatat generoidaan skripteillä `preparetestdata.m` jne
 
-* skripti kaikkien skenaarioiden ajamiseksi: `runall.m`
+* skriptit kaikkien samaan dataan liittyvien skenaarioiden ajamiseksi nimetty
+`runall.m` tjsp
 
 ## Muuta
 
