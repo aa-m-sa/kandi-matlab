@@ -50,7 +50,7 @@ def naive_dist(dataCircles, trueCircles):
         trueCircles = trueCircles.T
         nTrue = trueCircles.shape[0]
         print 'Warning: try correctin trueCircles dim'
-        if nData != nTrue
+        if nData != nTrue:
             # raise error
             raise TypeError('dimension mismatch')
 
