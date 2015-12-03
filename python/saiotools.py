@@ -134,6 +134,6 @@ def parse_meta(filename):
 
     """
     #here be rexgreppery magikcs
-    return {'tempConst': t, 'maxLen', n}
+    return {'tempConst': t, 'maxLen': n}
 
 

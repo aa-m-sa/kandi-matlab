@@ -63,7 +63,7 @@ def analyze_all(scenario_list, basedirname):
     """
 
     # original targets for each circle set in dataset
-    target_data = satools.load_set2_target()
+    target_data = saiotools.load_set2_target()
 
     # scenario: same annealing schedule and other related settings
     # scenario includes multiple circleDatas
