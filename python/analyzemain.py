@@ -5,7 +5,7 @@
 Script. Analyze and plot all
 """
 
-import satools
+import saiotools
 
 def best_final_energy_walkers():
     """
