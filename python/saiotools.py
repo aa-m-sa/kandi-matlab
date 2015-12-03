@@ -83,7 +83,7 @@ def load_set2_full(dataFolder):
         if fIdent.isdigit():
             fIdent = int(fIdent)
         try:
-            dataSet[fIdent] = EnsembleData(scipy.io.loadmat(file))
+            dataSet[fIdent] = EnsembleData(scipy.io.loadmat(dataFolder + '/' + file))
         except NotImplementedError as e:
             # new-style Matlab file not compatible
             print 'Warning: Dropping error'
@@ -110,7 +110,7 @@ class TargetData(object):
 
         self.originalTestData = loadedTestFile
 
-def load_set2_target(dirName='../testdata-shared', commonPart='testdata2_'):
+def load_set2_target(dirName='../testdata-shared/', commonPart='testdata2_'):
     """
     Load set2 originals,
     format them as nice python things

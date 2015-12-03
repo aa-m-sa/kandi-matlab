@@ -70,7 +70,7 @@ def analyze_all(scenario_list, basedirname):
     data = dict()
     for s in scenario_list:
         for circleSet in ['c1-', 'c2-', 'c3-', 'c4-', 'c5-']:
-            circleSetData = saiotools.load_set2_full(basedirname + s + circleSet)
+            circleSetData = saiotools.load_set2_full(basedirname + s + '-' + circleSet)
             meta = saiotools.parse_meta(s)
             numCircles = int(circleSet[1])
             meta['numCircles'] = numCircles
