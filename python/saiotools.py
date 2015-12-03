@@ -7,6 +7,7 @@ Tools for loading SA data
 """
 
 import os
+import re
 import scipy.io
 import numpy as np
 
@@ -134,6 +135,7 @@ def parse_meta(filename):
 
     """
     #here be rexgreppery magikcs
+    t, n = re.match(r'.*t(.+)-n(.+)', filename).group(1,2)
     return {'tempConst': t, 'maxLen': n}
 
 
