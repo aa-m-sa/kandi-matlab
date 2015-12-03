@@ -59,11 +59,13 @@ def analyze_circleSet(circleSetData, targetData, meta):
 
     for s in circleSetData:
         ensemble = circleSetData[s]
+        error_rates = dict()
         for walker in xrange(ensemble.ensembleSize):
             # error rate evolution of a walker
-            error_rates = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
-            np.savetxt('error_rates' + meta['scenario'] + '_c' + str(meta['numCircles']) + '_' + str(walker) + '.txt', error_rates)
+            error_rates[walker] = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
             # energy evolution of a walker
+
+        np.save('error_rates' + meta['scenario'] + '_c' + str(meta['numCircles']) + '_s' + s, error_rates)
 
 def analyze_all(scenario_list, basedirname):
     """
