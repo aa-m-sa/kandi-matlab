@@ -63,7 +63,7 @@ def analyze_all(scenario_list, basedirname):
     """
 
     # original targets for each circle set in dataset
-    target_data = saiotools.load_set2_target()
+    targetData = saiotools.load_set2_target()
 
     # scenario: same annealing schedule and other related settings
     # scenario includes multiple circleDatas
@@ -78,7 +78,7 @@ def analyze_all(scenario_list, basedirname):
 
 if __name__ == "__main__":
     scenario_list = ['t99-n1000',
-                     't98-n800',
+                     't98-n1000',
                      't96-n600',
                      't94-n600',
                      't90-n600']
