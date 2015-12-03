@@ -46,6 +46,13 @@ def analyze_circleSet(circleSetData, targetData, meta):
 
     # error rate
 
+    # test it works
+
+    print '-'
+    print meta['tempConst'], meta['maxLen']
+    print circleSetData.keys()
+    print targetData.nDataCircles
+
 def analyze_all(scenario_list, basedirname):
     """
     Handles all scenarios:
@@ -76,5 +83,5 @@ if __name__ == "__main__":
                      't94-n600',
                      't90-n600']
 
-    basedirname = 'testdata-annealingset2b-50x50-'
+    basedirname = '../testdata-annealingset2b-50x50-'
     analyze_all(scenario_list, basedirname)
