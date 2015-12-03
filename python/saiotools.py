@@ -110,7 +110,7 @@ class TargetData(object):
 
         self.originalTestData = loadedTestFile
 
-def load_set2_target(dirName='testdata-shared', commonPart='testdata2_'):
+def load_set2_target(dirName='../testdata-shared', commonPart='testdata2_'):
     """
     Load set2 originals,
     format them as nice python things
@@ -122,7 +122,7 @@ def load_set2_target(dirName='testdata-shared', commonPart='testdata2_'):
 
     target = dict()
     for c in ['1','2','3','4','5']:
-        target[int(c)] = TargetData(scipy.io.loadmat(commonPart + c + '.mat'))
+        target[int(c)] = TargetData(scipy.io.loadmat(dirName + commonPart + c + '.mat'))
 
     return target
 
