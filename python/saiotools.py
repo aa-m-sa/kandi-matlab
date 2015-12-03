@@ -80,7 +80,7 @@ def load_set2_full(dataFolder):
 
     dataSet = dict()
     for file in [f for f in files if f.startswith(commonFormat)]:
-        fIdent = file[len(commonFormat):]
+        fIdent = file[len(commonFormat):-4]
         if fIdent.isdigit():
             fIdent = int(fIdent)
         try:
