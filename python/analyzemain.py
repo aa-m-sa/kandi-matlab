@@ -28,7 +28,7 @@ def error_rate_evo(walkerCircles, walkerLen, targetCircles, measure):
     def wrapper(wCircle):
         measure(wCircle.squeeze().T, targetCircles)
 
-    return np.apply_along_axis(wrapper, walkerCircles, axis='1')
+    return np.apply_along_axis(wrapper, walkerCircles, axis=1)
 
 
 def error_rates_final(circleSetResultData, targetData, measure):
