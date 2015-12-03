@@ -26,9 +26,12 @@ def error_rate_evo(walkerCircles, walkerLen, targetCircles, measure):
     Returns error rate evolution for a walker.
     """
     def wrapper(wCircle):
-        measure(wCircle.squeeze().T, targetCircles)
+        if wCircle.ndim == 1:
+            wCircle = wCircle.reshape(1, len(wCircle))
+        return measure(wCircle, targetCircles)
 
-    return np.apply_along_axis(wrapper, 1, walkerCircles)
+    errs =  np.apply_along_axis(wrapper, 0, walkerCircles)
+    return errs
 
 
 def error_rates_final(circleSetResultData, targetData, measure):
@@ -59,7 +62,7 @@ def analyze_circleSet(circleSetData, targetData, meta):
         for walker in xrange(ensemble.ensembleSize):
             # error rate evolution of a walker
             error_rates = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
-            np.savetxt('error_rates' + meta['scenario'] + '_c' + meta['numCircles'] + '_' + int(walker) + '.txt', error_rates)
+            np.savetxt('error_rates' + meta['scenario'] + '_c' + str(meta['numCircles']) + '_' + str(walker) + '.txt', error_rates)
             # energy evolution of a walker
 
 def analyze_all(scenario_list, basedirname):
