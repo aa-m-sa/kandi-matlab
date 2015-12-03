@@ -47,12 +47,8 @@ def naive_dist(dataCircles, trueCircles):
     nData = dataCircles.shape[0]
     nTrue = trueCircles.shape[0]
     if nData != nTrue:
-        trueCircles = trueCircles.T
-        nTrue = trueCircles.shape[0]
-        print 'Warning: try correctin trueCircles dim'
-        if nData != nTrue:
-            # raise error
-            raise TypeError('dimension mismatch')
+        # raise error
+        raise TypeError('dimension mismatch ' + str(nData) + " " + str(nTrue))
 
     # distance matrix
     dists = cdist(dataCircles, trueCircles)
@@ -70,4 +66,3 @@ def naive_dist(dataCircles, trueCircles):
         dists = dists[mask].reshape(nData-c-1, nTrue-c-1)
 
     return np.sum([dists_org[i[0],i[1]] for i in pairs])
-
