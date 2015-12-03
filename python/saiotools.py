@@ -24,7 +24,7 @@ def createCircles(circleDataPts, circleDataR, ensembleSize):
         wpts = circleDataPts[walker]
         wrs  = circleDataR[walker]
         rs = (1, wrs.shape[0], wrs.shape[1])
-        ensCircles[walker] = np.concatenate([wpts, wrs.reshape(rs)])
+        ensCircles[walker] = np.concatenate([wpts.reshape((2, rs[1], rs[2])), wrs.reshape(rs)])
     return ensCircles
 
 class EnsembleData(object):
@@ -45,13 +45,13 @@ class EnsembleData(object):
         :loadedAnnData: output of scipy.io.loadmat
         """
 
-        self.ensembleSize    = loadedAnnData['enDataMarkovNo'][1]
+        self.ensembleSize    = loadedAnnData['enDataMarkovNo'].shape[1]
         self.iterNums        = loadedAnnData['enDataLen'][0,:]
         self.markovChainNos  = loadedAnnData['enDataMarkovNo'][0,:]
 
         self.circleDataPts   = loadedAnnData['enDataPts'][0,:]
         self.circleDataR     = loadedAnnData['enDataR'][0,:]
-        self.circles = createCircles(circleDataPts, circleDataR, ensembleSize)
+        self.circles = createCircles(self.circleDataPts, self.circleDataR, self.ensembleSize)
 
         self.ratios          = loadedAnnData['enDataRatios'][0,:]
         self.energies        = loadedAnnData['enDataEnerg'][0,:]
