@@ -47,13 +47,6 @@ def analyze_circleSet(circleSetData, targetData, meta):
     :meta: some meta information from filename
     """
 
-    # run all hooks on data and target_data
-    # what plots we need / want?
-
-    # error rate
-
-    # test if it works
-
     print '-'
     print meta['origFilename'], meta['tempConst'], meta['maxLen']
 
@@ -61,11 +54,7 @@ def analyze_circleSet(circleSetData, targetData, meta):
         ensemble = circleSetData[s]
         error_rates = dict()
         for walker in xrange(ensemble.ensembleSize):
-            # error rate evolution of a walker
-            error_rates[walker] = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
-            # energy evolution of a walker
-
-        np.save('error_rates' + meta['scenario'] + '_c' + str(meta['numCircles']) + '_s' + str(s), error_rates)
+            # something we want for every walker
 
 def analyze_all(scenario_list, basedirname):
     """
@@ -91,6 +80,26 @@ def analyze_all(scenario_list, basedirname):
             meta['scenario'] = s
             analyze_circleSet(circleSetData, targetData[numCircles], meta)
 
+def analyze_particular(scenario, basedirname, circleSet):
+    targetData = saiotools.load_set2_target()
+    circleSetData = saiotools.load_set2_full(basedirname + s + '-' + circleSet)
+    meta = saiotools.parse_meta(s)
+    numCircles = int(circleSet[1])
+    meta['numCircles'] = numCircles
+    meta['scenario'] = s
+
+    # alternatively
+    analyze_circleSet(circleSetData, targetData[numCircles], meta)
+
+    ## pick an ensemble
+    #ensemble = 
+    #walker = 
+
+    ## pick walker
+    ## error rate evolution of a walker
+    #error_rates[walker] = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
+    # energy evolution of a walker
+
 if __name__ == "__main__":
     scenario_list = ['t99-n1000',
                      't98-n1000',
@@ -99,4 +108,5 @@ if __name__ == "__main__":
                      't90-n600']
 
     basedirname = '../testdata-annealingset2b-50x50-'
-    analyze_all(scenario_list, basedirname)
+    #analyze_all(scenario_list, basedirname)
+    #analyze_particular('')
