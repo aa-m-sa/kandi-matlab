@@ -6,6 +6,8 @@ Script. Analyze and plot all
 """
 
 import saiotools
+import sadistance
+import numpy as np
 
 def best_final_energy_walkers():
     """
@@ -19,19 +21,20 @@ def final_energies_histo():
     """
     pass
 
-def error_rates(circleSetData, targetData, measure):
+def error_rate_evo(walkerCircles, walkerLen, targetCircles, measure):
     """
-    Returns error rate evolution for walker in scenario.
+    Returns error rate evolution for a walker.
     """
-    #base = measure(dataCircles, trueCircles)
-    # TODO
-    pass
+    def wrapper(wCircle):
+        measure(wCircle.squeeze().T, targetCircles)
+
+    return np.apply_along_axis(wrapper, walkerCircles, axis='1')
+
 
 def error_rates_final(circleSetResultData, targetData, measure):
     """
     Returns error rates of final state of each walker.
     """
-    #TODO
     pass
 
 def analyze_circleSet(circleSetData, targetData, meta):
@@ -46,12 +49,18 @@ def analyze_circleSet(circleSetData, targetData, meta):
 
     # error rate
 
-    # test it works
+    # test if it works
 
     print '-'
-    print meta['tempConst'], meta['maxLen']
-    print circleSetData.keys()
-    print targetData.nDataCircles
+    print meta['origFilename'], meta['tempConst'], meta['maxLen']
+
+    for s in circleSetData:
+        ensemble = circleSetData[s]
+        for walker in xrange(ensemble.ensembleSize):
+            # error rate evolution of a walker
+            error_rates = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData, sadistance.naive_dist)
+            np.savetxt('error_rates' + meta['scenario'] + '_c' + meta['numCircles'] + '_' + int(walker) + '.txt', error_rates)
+            # energy evolution of a walker
 
 def analyze_all(scenario_list, basedirname):
     """
@@ -74,6 +83,7 @@ def analyze_all(scenario_list, basedirname):
             meta = saiotools.parse_meta(s)
             numCircles = int(circleSet[1])
             meta['numCircles'] = numCircles
+            meta['scenario'] = s
             analyze_circleSet(circleSetData, targetData[numCircles], meta)
 
 if __name__ == "__main__":

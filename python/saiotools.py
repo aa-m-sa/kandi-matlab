@@ -136,6 +136,6 @@ def parse_meta(filename):
     """
     #here be rexgreppery magikcs
     t, n = re.match(r'.*t(.+)-n(.+)', filename).group(1,2)
-    return {'tempConst': t, 'maxLen': n}
+    return {'tempConst': t, 'maxLen': n, 'origFilename': filename}
 
 

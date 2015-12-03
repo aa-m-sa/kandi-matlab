@@ -9,7 +9,7 @@ Distance mearsures for circle toy SA problem results evaluation.
 
 import numpy as np
 import scipy as sp
-import scipy.spatial.distance.cdist as cdist
+from scipy.spatial.distance import cdist
 
 def filled_circles(circles, imSize):
     nData = circles.shape[0]
@@ -47,7 +47,12 @@ def naive_dist(dataCircles, trueCircles):
     nData = dataCircles.shape[0]
     nTrue = trueCircles.shape[0]
     if nData != nTrue:
-        # raise error
+        trueCircles = trueCircles.T
+        nTrue = trueCircles.shape[0]
+        print 'Warning: try correctin trueCircles dim'
+        if nData != nTrue
+            # raise error
+            raise TypeError('dimension mismatch')
 
     # distance matrix
     dists = cdist(dataCircles, trueCircles)
