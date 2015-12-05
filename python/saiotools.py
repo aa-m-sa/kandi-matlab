@@ -68,7 +68,7 @@ class ResultsData(object):
         self.x = loadedResData['enX'].squeeze()
         self.y = loadedResData['enY'].squeeze()
 
-        self.circles = np.dstack((np.hstack(x), np.hstack(y), np.hstack(r))).swapaxes(2,0).swapaxes(0,1)
+        self.circles = np.dstack((np.hstack(self.x), np.hstack(self.y), np.hstack(self.r))).swapaxes(2,0).swapaxes(0,1)
 
         self.originalResData = loadedResData
 
