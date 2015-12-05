@@ -40,9 +40,10 @@ def error_rates_final(circleSetResultData, targetData, measure):
     """
     pass
 
-def analyze_circleSet(circleSetData, targetData, meta):
+def analyze_circleSet(circleSetData, circleSetResultData, targetData, meta):
     """
     :circleSetData: a dict of saiotools.EnsembleData objects
+    :circleSetResultData: dict of saiotools.ResultsData objects
     :targetData: a TargetData object
     :meta: some meta information from filename
     """
@@ -55,6 +56,7 @@ def analyze_circleSet(circleSetData, targetData, meta):
         error_rates = dict()
         for walker in xrange(ensemble.ensembleSize):
             # something we want for every walker
+            pass
 
 def analyze_all(scenario_list, basedirname):
     """
@@ -73,12 +75,12 @@ def analyze_all(scenario_list, basedirname):
     data = dict()
     for s in scenario_list:
         for circleSet in ['c1-', 'c2-', 'c3-', 'c4-', 'c5-']:
-            circleSetData = saiotools.load_set2_full(basedirname + s + '-' + circleSet)
+            circleSetData, circleSetResultData = saiotools.load_set2_full(basedirname + s + '-' + circleSet)
             meta = saiotools.parse_meta(s)
             numCircles = int(circleSet[1])
             meta['numCircles'] = numCircles
             meta['scenario'] = s
-            analyze_circleSet(circleSetData, targetData[numCircles], meta)
+            analyze_circleSet(circleSetData, circleSetResultData, targetData[numCircles], meta)
 
 def analyze_particular(scenario, basedirname, circleSet):
     targetData = saiotools.load_set2_target()

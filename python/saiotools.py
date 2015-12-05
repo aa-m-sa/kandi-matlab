@@ -59,10 +59,18 @@ class EnsembleData(object):
         self.temps           = loadedAnnData['enDataTemps'][0,:]
         self.originalAnnData = loadedAnnData
 
-def parse_sa_resmat(loadedResData):
-    """Parse final results of each walker"""
-    # TODO
-    pass
+class ResultsData(object):
+
+    def __init__(self, loadedResData):
+        """self.circles: numEnsembles x 3 x numCircles"""
+
+        self.r = loadedResData['enR'].squeeze()
+        self.x = loadedResData['enX'].squeeze()
+        self.y = loadedResData['enY'].squeeze()
+
+        self.circles = np.dstack((np.hstack(x), np.hstack(y), np.hstack(r))).swapaxes(2,0).swapaxes(0,1)
+
+        self.originalResData = loadedResData
 
 def load_set2_full(dataFolder):
     """
@@ -71,27 +79,41 @@ def load_set2_full(dataFolder):
 
     :dataFolder: where to look at (load all format*.mat files in there)
 
-    :returns: a dict of ndarray things (keyed by the unique part of filename = int)
-    (not a list; original numbering begins with 1, don't want to mess with it
-    unless necessary) """
+    :returns: tuple circleSetData, circleSetResultData
+        circleSetData: a dict of EnsembleData objs (keyed by the unique part of
+        filename = int) (not a list; original numbering begins with 1, don't
+        want to mess with it unless necessary)
+
+        circleSetResultData: corresponding dict of ndarrays of pre-found final
+        coordinates of each walker in respective ensembles """
 
     files = os.listdir(dataFolder)
     commonFormat = 'ann-data-pic-'
+    commonResFormat = 'results-pic-'
 
     dataSet = dict()
-    for file in [f for f in files if f.startswith(commonFormat)]:
-        fIdent = file[len(commonFormat):-4]
+    resDataSet = dict()
+    for file in [f for f in files if (f.startswith(commonFormat) or f.startswith(commonResFormat))]:
+        if file.startswith(commonFormat):
+            fIdent = file[len(commonFormat):-4]
+        elif file.startswith(commonResFormat):
+            fIdent = file[len(commonResFormat):-4]
+
         if fIdent.isdigit():
             fIdent = int(fIdent)
+
         try:
-            dataSet[fIdent] = EnsembleData(scipy.io.loadmat(dataFolder + '/' + file))
+            if file.startswith(commonFormat):
+                dataSet[fIdent] = EnsembleData(scipy.io.loadmat(dataFolder + '/' + file))
+            elif file.startswith(commonResFormat):
+                resDataSet[fIdent] = ResultsData(scipy.io.loadmat(dataFolder + '/' + file))
         except NotImplementedError as e:
             # new-style Matlab file not compatible
             print 'Warning: Dropping error'
             print e
             # if one has managed to creep in, implement a h5py thing here TODO
 
-    return dataSet
+    return dataSet, resDataSet
 
 class TargetData(object):
 
