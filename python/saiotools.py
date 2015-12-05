@@ -17,7 +17,7 @@ def createCircles(circleDataPts, circleDataR, ensembleSize):
     Verraa niize format, sveethot.
 
     Returns: Ensemble-sized ndtype= object array, where each walker is a
-    (3, iterLen, numCircles) array
+    (iterLen, numCircles, (x,y,r)) array
     first 3 params: [x, y, r]
     """
     ensCircles = np.empty(ensembleSize, dtype=object)
@@ -25,7 +25,7 @@ def createCircles(circleDataPts, circleDataR, ensembleSize):
         wpts = circleDataPts[walker]
         wrs  = circleDataR[walker]
         rs = (1, wrs.shape[0], wrs.shape[1])
-        ensCircles[walker] = np.concatenate([wpts.reshape((2, rs[1], rs[2])), wrs.reshape(rs)])
+        ensCircles[walker] = np.concatenate([wpts.reshape((2, rs[1], rs[2])), wrs.reshape(rs)]).swapaxes(0,1).swapaxes(1,2)
     return ensCircles
 
 class EnsembleData(object):
@@ -62,13 +62,13 @@ class EnsembleData(object):
 class ResultsData(object):
 
     def __init__(self, loadedResData):
-        """self.circles: numEnsembles x 3 x numCircles"""
+        """self.circles: numEnsembles x numCircles x (x,y,r)"""
 
         self.r = loadedResData['enR'].squeeze()
         self.x = loadedResData['enX'].squeeze()
         self.y = loadedResData['enY'].squeeze()
 
-        self.circles = np.dstack((np.hstack(self.x), np.hstack(self.y), np.hstack(self.r))).swapaxes(2,0).swapaxes(0,1)
+        self.circles = np.dstack((np.hstack(self.x), np.hstack(self.y), np.hstack(self.r))).swapaxes(0,1)
 
         self.originalResData = loadedResData
 

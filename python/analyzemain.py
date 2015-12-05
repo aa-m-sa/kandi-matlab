@@ -21,20 +21,6 @@ def final_energies_histo():
     """
     pass
 
-def error_rate_evo(walkerCircles, walkerLen, targetCircles, measure):
-    """
-    Returns error rate evolution for a walker.
-    Very slow, not feasible to compute.
-    """
-    def wrapper(wCircle):
-        if wCircle.ndim == 1:
-            wCircle = wCircle.reshape(1, len(wCircle))
-        return measure(wCircle, targetCircles)
-
-    errs =  np.apply_along_axis(wrapper, 0, walkerCircles)
-    return errs
-
-
 def error_rates_final(circleSetResultData, targetData, measure):
     """
     Returns error rates of final state of each walker.
