@@ -24,6 +24,7 @@ def final_energies_histo():
 def error_rate_evo(walkerCircles, walkerLen, targetCircles, measure):
     """
     Returns error rate evolution for a walker.
+    Very slow, not feasible to compute.
     """
     def wrapper(wCircle):
         if wCircle.ndim == 1:
