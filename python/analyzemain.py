@@ -26,29 +26,24 @@ selectedBasedirname = '../testdata-annealingset2b-50x50-'
 selectedDataResultsA_slow = 't99-n1000'
 selectedDataResultsA_fast = 't90-n600'
 
-def pick_selected_target_ims(targetData, selectedList=selectedTargetSets):
+def pick_selected_target_ims(targetData, sList=selectedTargetSets):
     selected = []
     selectedCirc = []
-    for c, p in selectedList:
+    for c, p in sList:
         selected.append(targetData[c].dataSets[p-1])
         selectedCirc.append(targetData[c].targets[p-1])
     return selected, selectedCirc, selectedTargetSets
 
-def pick_nload_selected_all_results_A():
-    slow = []
-    fast = []
-    for c, p in selectedTargetSetsA:
-        slowDirStr = selectedBasedirname + selectedDataResultsA_slow + '-c' + str(c) + '-/'
-        slowData, slowResData = saiotools.load_set2_full(slowDirStr)
-        slow.append((slowData[p], slowResData[p]))
-
-        fastDirStr = selectedBasedirname + selectedDataResultsA_fast + '-c' + str(c) + '-/'
-        fastData, fastResData = saiotools.load_set2_full(fastDirStr)
-        fast.append((fastData[p], fastResData[p]))
-    return slow, fast
+def pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_slow):
+    res = []
+    for c, p in sTargetList:
+        dirStr = selectedBasedirname + sDataResults + '-c' + str(c) + '-/'
+        enData, resData = saiotools.load_set2_full(dirStr)
+        res.append((enData[p], resData[p]))
+    return res
 
 def pick_best_energy_results_A(s):
-    """:s: slow or fast above"""
+    """:s: res above"""
     bestEnergies =[]
     bestEnergyInds =[]
     bestEnergyCircles =[]
@@ -62,12 +57,17 @@ def pick_best_energy_results_A(s):
 
     return bestEnergies, bestEnergyInds, bestEnergyCircles
 
+def get_best_enery_error_rates(bestEnergyCircles, targets, measure=sadistance.naive_dist):
+    """
+    'helpful' almost oneliner
 
-def error_rates_final(circleSetResultData, targetData, measure):
+    :bestEnergyCircles:list
+    :targets: corresponding targets
+    :returns: list of measure output for circ, target pairs
     """
-    Returns error rates of final state of each walker.
-    """
-    pass
+
+    return [measure(circs,ts) for circs, ts in zip(bestEnergyCircles, targets)]
+
 
 def analyze_circleSet(circleSetData, circleSetResultData, targetData, meta):
     """
@@ -94,6 +94,7 @@ def analyze_all(scenario_list, basedirname):
         - analyze
         - save results
         (- handle stuff that uses all data gathered on previous rounds?)
+    Very slow, very stupid, do not use.
     """
 
     # original targets for each circle set in dataset
@@ -113,23 +114,7 @@ def analyze_all(scenario_list, basedirname):
 
 def analyze_particular(scenario, basedirname, circleSet):
     targetData = saiotools.load_set2_target()
-    circleSetData = saiotools.load_set2_full(basedirname + s + '-' + circleSet)
-    meta = saiotools.parse_meta(s)
-    numCircles = int(circleSet[1])
-    meta['numCircles'] = numCircles
-    meta['scenario'] = s
-
-    # alternatively
-    analyze_circleSet(circleSetData, targetData[numCircles], meta)
-
-    ## pick an ensemble
-    #ensemble = 
-    #walker = 
-
-    ## pick walker
-    ## error rate evolution of a walker
-    #error_rates[walker] = error_rate_evo(ensemble.circles[walker], ensemble.iterNums[walker], targetData.targets[s-1], sadistance.naive_dist)
-    # energy evolution of a walker
+    #
 
 if __name__ == "__main__":
     scenario_list = ['t99-n1000',
