@@ -21,16 +21,16 @@ def final_energies_histo():
     """
     pass
 
-def plot_circles(circles, ax):
+def plot_circles(circles, ax, gfxLine='g-',gfxCentr='gx'):
     """
     Plots line circles on axes.
     :circles: n x [x, y, r] array
 
     """
-    ax.plot(circles[:,1], circles[:,0], 'gx', ms=5, mew=2)
+    ax.plot(circles[:,1], circles[:,0], gfxCentr, ms=5, mew=2)
     rt = np.linspace(0, 2*np.pi)
     for c in xrange(circles.shape[0]):
-        ax.plot(circles[c,2]*np.sin(rt) + circles[c,1], circles[c,2]*np.cos(rt) + circles[c,0], 'g-', linewidth=2)
+        ax.plot(circles[c,2]*np.sin(rt) + circles[c,1], circles[c,2]*np.cos(rt) + circles[c,0], gfxLine, linewidth=2)
 
 def custom_imshow(dataSet, ax):
     ax.imshow(dataSet, interpolation='none', cmap=plt.cm.gray, origin='lower')
@@ -72,5 +72,26 @@ def plot_datasets_2x3(dataSetsList, descriptors):
 
     #f.subplots_adjust(0.05,0.05,0.65,0.90,0.10,0.20)
     #^ difficult to get right
+    f.tight_layout()
+    return f, ax
+
+def plot_3datasets_results(dataSetsList, descriptors,dataResults, targetCirclesList):
+    """
+    3 datasets in a list
+    2x3: First row data + found, second target + found line gfx
+    """
+    f, ax = plt.subplots(2,3, figsize=(9,6))
+    for i in [0,1,2]:
+        custom_imshow(dataSetsList[i], ax[0,i])
+        plot_circles(dataResults[i], ax[0,i], gfxLine='r-', gfxCentr='rx')
+        ax[0,i].set_xbound(0, 50)
+        ax[0,i].set_ybound(0, 50)
+        ax[0,i].set_title("Kiekkoja: " +str(descriptors[i][0]))
+
+        plot_circles(dataResults[i], ax[1,i], gfxLine='r-', gfxCentr='rx')
+        plot_circles(targetCirclesList[i], ax[1,i], gfxLine='g--')
+        ax[1,i].set_xbound(0, 50)
+        ax[1,i].set_ybound(0, 50)
+
     f.tight_layout()
     return f, ax
