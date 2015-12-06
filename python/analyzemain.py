@@ -8,6 +8,9 @@ Script. Analyze and plot all
 import saiotools
 import sadistance
 import numpy as np
+import copy
+
+# selected: reserved globals
 
 selectedTargetSetsA = [(2,8),
                        (4,1),
@@ -15,15 +18,50 @@ selectedTargetSetsA = [(2,8),
 selectedTarget2 = [(2,13)]
 selectedTarget3 = [(3,1),
                    (3,3)]
-selectedTargetSets = selectedTargetSetsA
+selectedTargetSets =copy.deepcopy(selectedTargetSetsA)
 selectedTargetSets.extend(selectedTarget2)
 selectedTargetSets.extend(selectedTarget3)
 
-def create_selected_target_ims(targetData):
+selectedBasedirname = '../testdata-annealingset2b-50x50-'
+selectedDataResultsA_slow = 't99-n1000'
+selectedDataResultsA_fast = 't90-n600'
+
+def pick_selected_target_ims(targetData, selectedList=selectedTargetSets):
     selected = []
-    for c, p in selectedTargetSets:
+    selectedCirc = []
+    for c, p in selectedList:
         selected.append(targetData[c].dataSets[p-1])
-    return selected, selectedTargetSets
+        selectedCirc.append(targetData[c].targets[p-1])
+    return selected, selectedCirc, selectedTargetSets
+
+def pick_nload_selected_all_results_A():
+    slow = []
+    fast = []
+    for c, p in selectedTargetSetsA:
+        slowDirStr = selectedBasedirname + selectedDataResultsA_slow + '-c' + str(c) + '-/'
+        slowData, slowResData = saiotools.load_set2_full(slowDirStr)
+        slow.append((slowData[p], slowResData[p]))
+
+        fastDirStr = selectedBasedirname + selectedDataResultsA_fast + '-c' + str(c) + '-/'
+        fastData, fastResData = saiotools.load_set2_full(fastDirStr)
+        fast.append((fastData[p], fastResData[p]))
+    return slow, fast
+
+def pick_best_energy_results_A(s):
+    """:s: slow or fast above"""
+    bestEnergies =[]
+    bestEnergyInds =[]
+    bestEnergyCircles =[]
+
+    for enData, resData in s:
+        energies = np.array([e[0,-1] for e in enData.energies])
+        bestEnergies.append(np.min(energies))
+        bestInd = np.argmin(energies)
+        bestEnergyInds.append(bestInd)
+        bestEnergyCircles.append(resData.circles[bestInd])
+
+    return bestEnergies, bestEnergyInds, bestEnergyCircles
+
 
 def error_rates_final(circleSetResultData, targetData, measure):
     """
