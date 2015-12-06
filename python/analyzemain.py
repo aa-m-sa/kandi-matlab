@@ -9,17 +9,6 @@ import saiotools
 import sadistance
 import numpy as np
 
-def best_final_energy_walkers():
-    """
-    Plot the best final energy as seen function of walkers
-    """
-    pass
-
-def final_energies_histo():
-    """
-    Histogram of final energies of walkers in a set
-    """
-    pass
 
 def error_rates_final(circleSetResultData, targetData, measure):
     """
