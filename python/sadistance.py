@@ -56,13 +56,19 @@ def naive_dist(dataCircles, trueCircles):
 
     # naive algo implementation, no intelligent data structures
     pairs = []
+    pair_ds = []
     for c in np.arange(nData):
+        pair_ds.append(np.min(dists))
         flat_min = np.argmin(dists)
         dc_min, tc_min = np.unravel_index(flat_min, (nData-c, nTrue-c))
-        pairs.append((dc_min, tc_min))
+        pairs.append((dataCircles[dc_min,:], trueCircles[tc_min,:]))
+
+        dataCircles = np.delete(dataCircles,dc_min,axis=0)
+        trueCircles = np.delete(trueCircles,tc_min,axis=0)
+
         mask = np.ones(dists.shape, dtype=np.bool)
         mask[dc_min,:] = False
         mask[:, tc_min] = False
         dists = dists[mask].reshape(nData-c-1, nTrue-c-1)
 
-    return np.sum([dists_org[i[0],i[1]] for i in pairs])
+    return np.sum(pair_ds), pairs
