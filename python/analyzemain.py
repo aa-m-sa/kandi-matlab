@@ -9,6 +9,21 @@ import saiotools
 import sadistance
 import numpy as np
 
+selectedTargetSetsA = [(2,8),
+                       (4,1),
+                       (5,2)]
+selectedTarget2 = [(2,13)]
+selectedTarget3 = [(3,1),
+                   (3,3)]
+selectedTargetSets = selectedTargetSetsA
+selectedTargetSets.extend(selectedTarget2)
+selectedTargetSets.extend(selectedTarget3)
+
+def create_selected_target_ims(targetData):
+    selected = []
+    for c, p in selectedTargetSets:
+        selected.append(targetData[c].dataSets[p-1])
+    return selected, selectedTargetSets
 
 def error_rates_final(circleSetResultData, targetData, measure):
     """

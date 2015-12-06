@@ -7,6 +7,8 @@ Module. Visualization tools.
 import numpy as np
 from matplotlib import pyplot as plt
 
+import itertools
+
 def best_final_energy_walkers():
     """
     Plot the best final energy as seen function of walkers
@@ -30,6 +32,11 @@ def plot_circles(circles, ax):
     for c in xrange(circles.shape[0]):
         ax.plot(circles[c,2]*np.sin(rt) + circles[c,1], circles[c,2]*np.cos(rt) + circles[c,0], 'g-', linewidth=2)
 
+def custom_imshow(dataSet, ax):
+    ax.imshow(dataSet, interpolation='none', cmap=plt.cm.gray, origin='lower')
+
+# for printing
+
 def plot_targets_1(circles, dataSet):
     """
     Plots circles of one pic,
@@ -39,13 +46,31 @@ def plot_targets_1(circles, dataSet):
     :returns: TODO
 
     """
-    f, ax = plt.subplots(1,2)
+    f, ax = plt.subplots(1,2, figsize=(6,4))
     plot_circles(circles, ax[0])
 
     ax[0].set_xbound(0, 50)
     ax[0].set_ybound(0, 50)
     ax[0].set_aspect('equal', adjustable='box')
 
-    ax[1].imshow(dataSet, interpolation='none', cmap=plt.cm.gray, origin='lower')
+    custom_imshow(dataSet, ax[1])
 
+    f.tight_layout()
+    return f, ax
+
+def plot_datasets_2x3(dataSetsList, descriptors):
+    """
+    Plot 2x3 target noisy pics.
+    """
+    f, ax = plt.subplots(2,3, figsize=(9,6))
+    print descriptors
+    for ai in itertools.product([0,1],[0,1,2]):
+        i = ai[0]*3 + ai[1]
+        print ai, i
+        custom_imshow(dataSetsList[i], ax[ai[0],ai[1]])
+        ax[ai[0],ai[1]].set_title("Kiekkoja: " +str(descriptors[i][0]))
+
+    #f.subplots_adjust(0.05,0.05,0.65,0.90,0.10,0.20)
+    #^ difficult to get right
+    f.tight_layout()
     return f, ax
