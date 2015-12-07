@@ -119,9 +119,18 @@ def final_energies_histo3(enDatas, descriptors=None):
     for i in [0, 1, 2]:
         finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
         # TODO color
-        ax[i].hist(finalEnergies, bins=20, color='green')
+        n, bins, patches = ax[i].hist(finalEnergies, bins=20, range=(np.min(finalEnergies)-1, np.max(finalEnergies)+1), color='green')
+        fem = np.max(finalEnergies) - np.min(finalEnergies)
+        rou = min(-1, 1 - len(str(int(fem/5))))
+        pr = round(fem/5, rou)
+        ticks =np.arange(round(np.min(finalEnergies)+pr, rou), np.max(finalEnergies)+(pr/4), pr)
+        if np.min(finalEnergies) < ticks[0] - pr:
+            ticks = np.insert(ticks,0, ticks[0] - pr)
+        if np.max(finalEnergies) > ticks[-1] + pr:
+            ticks = np.append(ticks,ticks[-1] + pr)
+        ax[i].set_xticks(ticks)
         ax[i].set_xlabel('E')
-        ax[i].set_ylabel('n')
+        ax[i].set_ylabel('n', rotation=0)
         ax[i].grid(True)
 
     f.tight_layout()
