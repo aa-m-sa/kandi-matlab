@@ -9,17 +9,6 @@ from matplotlib import pyplot as plt
 
 import itertools
 
-def best_final_energy_walkers():
-    """
-    Plot the best final energy as seen function of walkers
-    """
-    pass
-
-def final_energies_histo():
-    """
-    Histogram of final energies of walkers in a set
-    """
-    pass
 
 def plot_circles(circles, ax, gfxLine='g-',gfxCentr='gx'):
     """
@@ -75,7 +64,7 @@ def plot_datasets_2x3(dataSetsList, descriptors):
     f.tight_layout()
     return f, ax
 
-def plot_3datasets_results(dataSetsList, descriptors,dataResults, targetCirclesList):
+def plot_3datasets_results(dataSetsList, descriptors,dataResultCircs, targetCirclesList):
     """
     3 datasets in a list
     2x3: First row data + found, second target + found line gfx
@@ -83,15 +72,58 @@ def plot_3datasets_results(dataSetsList, descriptors,dataResults, targetCirclesL
     f, ax = plt.subplots(2,3, figsize=(9,6))
     for i in [0,1,2]:
         custom_imshow(dataSetsList[i], ax[0,i])
-        plot_circles(dataResults[i], ax[0,i], gfxLine='r-', gfxCentr='rx')
+        plot_circles(dataResultCircs[i], ax[0,i], gfxLine='r-', gfxCentr='rx')
         ax[0,i].set_xbound(0, 50)
         ax[0,i].set_ybound(0, 50)
         ax[0,i].set_title("Kiekkoja: " +str(descriptors[i][0]))
 
-        plot_circles(dataResults[i], ax[1,i], gfxLine='r-', gfxCentr='rx')
+        plot_circles(dataResultCircs[i], ax[1,i], gfxLine='r-', gfxCentr='rx')
         plot_circles(targetCirclesList[i], ax[1,i], gfxLine='g--')
         ax[1,i].set_xbound(0, 50)
         ax[1,i].set_ybound(0, 50)
 
     f.tight_layout()
     return f, ax
+
+def best_final_energy_walkers(enDatas, descriptors):
+    """
+    Plot the best final energy as seen function of walkers
+    3 datasets in a list
+    1 x 3 plot of evolution of best final energy
+    """
+    f, ax = plt.subplots(1,3, figsize=(9,4))
+    for i in [0, 1, 2]:
+        finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
+        bestSFE = np.empty(finalEnergies.shape[0])
+        bestSFE[0] = finalEnergies[0]
+        for e in xrange(finalEnergies.shape[0] - 1) + 1:
+            bestSFE[e] = np.min(bestSFE[e-1], finalEnergies[e])
+
+        ax[i].plot(finalEnergies, 'k-', linewidth=1)
+        ax[i].plot(bestSFE, 'b-', linewidth=2)
+        ax[i].set_xlabel('kulkija')
+        ax[i].set_ylabel('E')
+        #ax[i].set_title('')
+        ax[i].grid(True)
+    f.tight_layout()
+    return f, ax
+
+
+def final_energies_histo3(enDatas, descriptors=None):
+    """
+    Histogram of final energies of walkers in a set
+    3 datasets in a list
+    1 x 3 histogram of final energies
+    """
+    f, ax = plt.subplots(1,3, figsize=(9,4))
+    for i in [0, 1, 2]:
+        finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
+        # TODO color
+        ax[i].hist(finalEnergies, bins=20, color='green')
+        ax[i].set_xlabel('E')
+        ax[i].set_ylabel('n')
+        ax[i].grid(True)
+
+    f.tight_layout()
+    return f, ax
+
