@@ -71,6 +71,23 @@ def get_best_enery_error_rates(bestEnergyCircles, targets, measure=sadistance.na
 
     return [measure(circs,ts) for circs, ts in zip(bestEnergyCircles, targets)]
 
+def find_energy_mode(enData):
+    """Find mode of a binned energy histogram.
+    (= Bin with most elements.)
+
+    :enData: TODO
+    :returns: energies, indices, circles
+        of in the mode (bin)
+
+    """
+    energies = np.array([e[0,-1] for e in enData.energies])
+    hist, edges = np.histogram(energies, bins=20)
+    mbin = np.argmax(hist)
+    indsInBin = [i for i,e in enumerate(enData.energies) if (e[0,-1] >= edges[mbin] and (e[0,-1] < edges[mbin + 1] or e[0,-1] == edges[-1]))]
+    enerInBin = [e[0,-1] for e in enData.energies[indsInBin]]
+    circInBin = [c[-1] for c in enData.circles[indsInBin]]
+    return enerInBin, indsInBin, circInBin
+
 
 def analyze_circleSet(circleSetData, circleSetResultData, targetData, meta):
     """
@@ -136,14 +153,27 @@ def run_print_plotters():
     f2, ax2 = saviz.plot_3datasets_results(tImsA, tDescsA, bestEnergyCirclesA_slow, tCircsA)
     f3, ax3 = saviz.plot_3datasets_results(tImsA, tDescsA, bestEnergyCirclesA_fast, tCircsA)
 
-
     f4, ax4 = saviz.final_energies_histo3([e for e,r in resA_slow])
     f5, ax5 = saviz.final_energies_histo3([e for e,r in resA_fast])
 
     f6, ax6 = saviz.final_energies_histo_k_compare([e for e,r in resA_slow],[e for e,r in resA_fast], k=3, descriptors=('Hidas', 'Nopea'))
 
+    # plot circles in the mode bin
+    for (e,r), t in zip(resA_fast, tCircsA):
+        be, bi, bc = find_energy_mode(e)
+        print 'min', np.min([ei[0,-1] for ei in e.energies])
+        print bi, len(bc)
+        print be
+        saviz.plot_all_circles(bc, t)
+    #TODO handpick a bin
+    #TODO mark bins in a histogram (vertical line?)
+
+
+    print 'errors'
     beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
     beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
+
+
 
 
 
