@@ -185,13 +185,15 @@ def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
     f.tight_layout()
     return f, ax
 
-def walker_temp_compare_1(energies1, temp1, energies2, temp2, desc1=['Paras','Tyypil.'], desc2=['Paras','Tyypil.']):
+def walker_temp_compare_1(energies1, temp1, energies2, temp2,
+                          desc1=['paras','tyypil.'], desc2=['paras','tyypil.'],
+                          logeny=True, logenx=True):
     """
     Compare walkers of two temps on one 2x1 plot:
         first pic energies
         second pic below temps
     :energies1: list of energies to plot
-    :temp1: corresponding temp values
+    :temp1: corresponding list of temps
     :energies2: respectively but for
     :temp2:
     """
@@ -200,25 +202,58 @@ def walker_temp_compare_1(energies1, temp1, energies2, temp2, desc1=['Paras','Ty
     ax1 = f.add_subplot(gs[0])
     ax2 = f.add_subplot(gs[1])
 
-    ni = np.max([len(e) for e in energies1 + energies2])
-    majorTicks = np.arange(0, ni, 50)
-    minorTicks = np.arange(0, ni, 20)
+    ni = np.max([len(e.squeeze()) for e in energies1 + energies2])
+    majorTicks = np.arange(0, ni, 2000)
+    minorTicks = np.arange(0, ni, 500)
 
     for i, e in enumerate(energies1):
-        ax1.plot(e, label=desc1[i])
+        label = "hidas, " + desc1[i]
+        if logeny and logenx:
+            ax1.loglog(e.squeeze(), label=label)
+        elif logeny and not logenx:
+            ax1.semilogy(e.squeeze(), label=label)
+        elif not logeny and logenx:
+            ax1.semilogx(e.squeeze(), label=label)
+        else:
+            ax1.plot(e.squeeze(), label=label)
+
+        if not logenx:
+            ax2.plot(temp1[i].squeeze(), label=label)
+        else:
+            ax2.semilogx(temp1[i].squeeze(), label=label)
 
     for i, e in enumerate(energies2):
-        ax1.plot(e, label=desc2[i])
+        label = "nopea, " + desc1[i]
+        if logeny and logenx:
+            ax1.loglog(e.squeeze(), label=label)
+        elif logeny and not logenx:
+            ax1.semilogy(e.squeeze(), label=label)
+        elif not logeny and logenx:
+            ax1.semilogx(e.squeeze(), label=label)
+        else:
+            ax1.plot(e.squeeze(), label=label)
 
-    ax2.plot(temp1)
-    ax2.plot(temp2)
+        if not logenx:
+            ax2.plot(temp2[i].squeeze(), label=label)
+        else:
+            ax2.semilogx(temp2[i].squeeze(), label=label)
 
-    ax1.set_xticks(majorTicks)
-    ax2.set_xticks(majorTicks)
-    ax1.set_xticks(minorTicks, minor=True)
-    ax2.set_xticks(minorTicks, minor=True)
-    ax.grid(which='minor', alpha=0.2)
-    ax.grid(which='major', alpha=0.4)
+    l1 = ax1.legend(loc='best')
+    #l2 = ax2.legend(loc='best')
+    #for legobj in l1.legendHandles + l2.legendHandles:
+    for legobj in l1.legendHandles:
+        legobj.set_linewidth(2.0)
+
+
+    if not logenx:
+        ax1.set_xticks(majorTicks)
+        ax2.set_xticks(majorTicks)
+        ax1.set_xticks(minorTicks, minor=True)
+        ax2.set_xticks(minorTicks, minor=True)
+    ax1.grid(which='minor', alpha=0.2)
+    ax1.grid(which='major', alpha=0.4)
+    ax2.grid(which='minor', alpha=0.2)
+    ax2.grid(which='major', alpha=0.4)
 
     f.tight_layout()
     return f, [ax1, ax2]

@@ -159,19 +159,45 @@ def run_print_plotters():
     f6, ax6 = saviz.final_energies_histo_k_compare([e for e,r in resA_slow],[e for e,r in resA_fast], k=3, descriptors=('Hidas', 'Nopea'))
 
     # plot circles in the mode bin
+    modeWalkersFast = []
     for (e,r), t in zip(resA_fast, tCircsA):
         be, bi, bc = find_energy_mode(e)
         print 'min', np.min([ei[0,-1] for ei in e.energies])
         print bi, len(bc)
         print be
-        saviz.plot_all_circles(bc, t)
+        bc, bi = np.array(bc), np.array(bi)
+        saviz.plot_all_circles(bc[np.argsort(be)], t)
+        modeWalkersFast.append(bi[np.argsort(be)[0]])
+
+    modeWalkersSlow = []
+    for (e,r), t in zip(resA_slow, tCircsA):
+        be, bi, bc = find_energy_mode(e)
+        print 'min', np.min([ei[0,-1] for ei in e.energies])
+        print bi, len(bc)
+        print be
+        bc, bi = np.array(bc), np.array(bi)
+        saviz.plot_all_circles(bc[np.argsort(be)], t)
+        modeWalkersSlow.append(bi[np.argsort(be)[0]])
     #TODO handpick a bin
     #TODO mark bins in a histogram (vertical line?)
 
+    sbi, smi = bestEnergyIndsA_slow[1], modeWalkersSlow[1]
+    print sbi, smi
+    enData_s, resData_s = resA_slow[1]
+    fbi, fmi = bestEnergyIndsA_fast[1], modeWalkersFast[1]
+    print fbi, fmi
+    enData_f, resData_f = resA_fast[1]
 
-    print 'errors'
-    beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
-    beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
+    f7, ax7 = saviz.walker_temp_compare_1([enData_s.energies[sbi],enData_s.energies[smi]],
+                                          [enData_s.temps[sbi], enData_s.temps[smi]],
+                                          [enData_f.energies[fbi],enData_f.energies[fmi]],
+                                          [enData_f.temps[fbi], enData_f.temps[fmi]])
+
+
+    #print 'errors'
+    #beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
+    #beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
+    #TODO latex table format
 
 
 
