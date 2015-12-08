@@ -140,6 +140,8 @@ def run_print_plotters():
     f4, ax4 = saviz.final_energies_histo3([e for e,r in resA_slow])
     f5, ax5 = saviz.final_energies_histo3([e for e,r in resA_fast])
 
+    f6, ax6 = saviz.final_energies_histo_k_compare([e for e,r in resA_slow],[e for e,r in resA_fast], k=3, descriptors=('Hidas', 'Nopea'))
+
     beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
     beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
 

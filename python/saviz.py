@@ -115,7 +115,7 @@ def final_energies_histo3(enDatas, descriptors=None):
     3 datasets in a list
     1 x 3 histogram of final energies
     """
-    f, ax = plt.subplots(1,3, figsize=(9,4))
+    f, ax = plt.subplots(1,3, sharey=True, figsize=(9,4))
     for i in [0, 1, 2]:
         finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
         # TODO color
@@ -130,8 +130,33 @@ def final_energies_histo3(enDatas, descriptors=None):
             ticks = np.append(ticks,ticks[-1] + pr)
         ax[i].set_xticks(ticks)
         ax[i].set_xlabel('E')
-        ax[i].set_ylabel('n', rotation=0)
         ax[i].grid(True)
+
+    ax[0].set_ylabel('n', rotation=0)
+    f.tight_layout()
+    return f, ax
+
+def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
+    """
+    Histogram of final energies of walkers in a set (any number of histograms to compare)
+    1 x k subplots, histograms 1 vs 2
+    In each subplot, compare histrogram in the first list to its pair in the second.
+    """
+    f, ax = plt.subplots(1,k, sharey=True, figsize=(9,4))
+    finalEnergies = []
+    for i in np.arange(k):
+        finalEnergies1 = np.array([e[0,-1] for e in enDatas1[i].energies])
+        finalEnergies2 = np.array([e[0,-1] for e in enDatas2[i].energies])
+        cmax = np.ceil(max(finalEnergies1.max(), finalEnergies2.max()))
+        bw = max(cmax/40, 10)
+        bins = np.arange(0, cmax+bw+1, bw)
+        ax[i].hist(finalEnergies1, bins=bins, alpha=0.5)
+        ax[i].hist(finalEnergies2, bins=bins, alpha=0.5)
+
+        ax[i].set_xlabel('E')
+        ax[i].grid(True)
+    ax[0].set_ylabel('n', rotation=0)
+    ax[2].legend(descriptors, loc='best')
 
     f.tight_layout()
     return f, ax
