@@ -6,6 +6,7 @@ Module. Visualization tools.
 
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.gridspec
 
 import itertools
 
@@ -25,6 +26,29 @@ def custom_imshow(dataSet, ax):
     ax.imshow(dataSet, interpolation='none', cmap=plt.cm.gray, origin='lower')
 
 # for printing
+
+def plot_all_circles(resCirclesList, targetCircles, onlyCenters=True, wiggle=4):
+    """
+    Plot all results in res vs true target
+    """
+    f, ax = plt.subplots(figsize=(6,4))
+    plot_circles(targetCircles, ax, gfxLine='g--')
+    cm = plt.get_cmap('Blues')
+    colorGrad = [cm(c) for c in np.linspace(0,1,len(resCirclesList))]
+    if onlyCenters:
+        for circles, c in zip(resCirclesList, colorGrad):
+            ax.plot(circles[:,1] + wiggle*(np.random.rand()-0.5),
+                    circles[:,0] + wiggle*(np.random.rand()-0.5),
+                    'x', color=c, ms=5, mew=2)
+    else:
+        print "not implemented"
+
+    ax.set_xbound(0, 50)
+    ax.set_ybound(0, 50)
+    ax.set_aspect('equal', adjustable='box')
+    f.tight_layout()
+    return f, ax
+
 
 def plot_targets_1(circles, dataSet):
     """
@@ -48,7 +72,7 @@ def plot_targets_1(circles, dataSet):
     return f, ax
 
 def plot_datasets_2x3(dataSetsList, descriptors):
-    """
+    """g
     Plot 2x3 target noisy pics.
     """
     f, ax = plt.subplots(2,3, figsize=(9,6))
@@ -161,3 +185,40 @@ def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
     f.tight_layout()
     return f, ax
 
+def walker_temp_compare_1(energies1, temp1, energies2, temp2, desc1=['Paras','Tyypil.'], desc2=['Paras','Tyypil.']):
+    """
+    Compare walkers of two temps on one 2x1 plot:
+        first pic energies
+        second pic below temps
+    :energies1: list of energies to plot
+    :temp1: corresponding temp values
+    :energies2: respectively but for
+    :temp2:
+    """
+    f = plt.figure(figsize=(9,6))
+    gs = matplotlib.gridspec.GridSpec(2,1, height_ratios=[2,1])
+    ax1 = f.add_subplot(gs[0])
+    ax2 = f.add_subplot(gs[1])
+
+    ni = np.max([len(e) for e in energies1 + energies2])
+    majorTicks = np.arange(0, ni, 50)
+    minorTicks = np.arange(0, ni, 20)
+
+    for i, e in enumerate(energies1):
+        ax1.plot(e, label=desc1[i])
+
+    for i, e in enumerate(energies2):
+        ax1.plot(e, label=desc2[i])
+
+    ax2.plot(temp1)
+    ax2.plot(temp2)
+
+    ax1.set_xticks(majorTicks)
+    ax2.set_xticks(majorTicks)
+    ax1.set_xticks(minorTicks, minor=True)
+    ax2.set_xticks(minorTicks, minor=True)
+    ax.grid(which='minor', alpha=0.2)
+    ax.grid(which='major', alpha=0.4)
+
+    f.tight_layout()
+    return f, [ax1, ax2]
