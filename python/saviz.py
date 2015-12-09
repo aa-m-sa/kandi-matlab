@@ -109,7 +109,7 @@ def plot_3datasets_results(dataSetsList, descriptors,dataResultCircs, targetCirc
     f.tight_layout()
     return f, ax
 
-def best_final_energy_walkers(enDatas, descriptors):
+def best_final_energy_walkers(enDatas, descriptors=None):
     """
     Plot the best final energy as seen function of walkers
     3 datasets in a list
@@ -120,13 +120,13 @@ def best_final_energy_walkers(enDatas, descriptors):
         finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
         bestSFE = np.empty(finalEnergies.shape[0])
         bestSFE[0] = finalEnergies[0]
-        for e in xrange(finalEnergies.shape[0] - 1) + 1:
-            bestSFE[e] = np.min(bestSFE[e-1], finalEnergies[e])
+        for e in np.arange(finalEnergies.shape[0] - 1) + 1:
+            bestSFE[e] = min(bestSFE[e-1], finalEnergies[e])
 
         ax[i].plot(finalEnergies, 'k-', linewidth=1)
         ax[i].plot(bestSFE, 'b-', linewidth=2)
         ax[i].set_xlabel('kulkija')
-        ax[i].set_ylabel('E')
+        ax[i].set_ylabel('E', labelpad=8, rotation=0)
         #ax[i].set_title('')
         ax[i].grid(True)
     f.tight_layout()
@@ -156,7 +156,7 @@ def final_energies_histo3(enDatas, descriptors=None):
         ax[i].set_xlabel('E')
         ax[i].grid(True)
 
-    ax[0].set_ylabel('n', rotation=0)
+    ax[0].set_ylabel('n', labelpad=8, rotation=0)
     f.tight_layout()
     return f, ax
 
@@ -179,7 +179,7 @@ def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
 
         ax[i].set_xlabel('E')
         ax[i].grid(True)
-    ax[0].set_ylabel('n', rotation=0)
+    ax[0].set_ylabel('n', labelpad=8, rotation=0)
     ax[2].legend(descriptors, loc='best')
 
     f.tight_layout()
@@ -254,6 +254,10 @@ def walker_temp_compare_1(energies1, temp1, energies2, temp2,
     ax1.grid(which='major', alpha=0.4)
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.4)
+
+    ax1.set_ylabel('E', labelpad=8, rotation=0)
+    ax2.set_ylabel('t', labelpad=8, rotation=0)
+    ax2.set_xlabel('iter')
 
     f.tight_layout()
     return f, [ax1, ax2]
