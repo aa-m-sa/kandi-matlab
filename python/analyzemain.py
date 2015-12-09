@@ -6,6 +6,7 @@ Script. Analyze and plot all
 """
 
 import numpy as np
+from matplotlib import pyplot as plt
 import copy
 
 import saiotools
@@ -45,7 +46,7 @@ def pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResult
         res.append((enData[p], resData[p]))
     return res
 
-def pick_best_energy_results_A(s):
+def pick_best_energy_results(s):
     """:s: res above"""
     bestEnergies =[]
     bestEnergyInds =[]
@@ -132,10 +133,12 @@ def analyze_all(scenario_list, basedirname):
             meta['scenario'] = s
             analyze_circleSet(circleSetData, circleSetResultData, targetData[numCircles], meta)
 
-def run_print_plotters():
+def run_print_plotters_all_A():
     """
     Get data an call print routines from saviz for plotting the prints.
+    selectedTargetSetsA and selectedTargetSets (all)
     """
+    plt.close('all')
 
     t = saiotools.load_set2_target()
 
@@ -147,8 +150,8 @@ def run_print_plotters():
     resA_slow = pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_slow)
     resA_fast = pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_fast)
 
-    bestEnergiesA_slow, bestEnergyIndsA_slow, bestEnergyCirclesA_slow = pick_best_energy_results_A(resA_slow)
-    bestEnergiesA_fast, bestEnergyIndsA_fast, bestEnergyCirclesA_fast = pick_best_energy_results_A(resA_fast)
+    bestEnergiesA_slow, bestEnergyIndsA_slow, bestEnergyCirclesA_slow = pick_best_energy_results(resA_slow)
+    bestEnergiesA_fast, bestEnergyIndsA_fast, bestEnergyCirclesA_fast = pick_best_energy_results(resA_fast)
 
     f2, ax2 = saviz.plot_3datasets_results(tImsA, tDescsA, bestEnergyCirclesA_slow, tCircsA)
     f3, ax3 = saviz.plot_3datasets_results(tImsA, tDescsA, bestEnergyCirclesA_fast, tCircsA)
@@ -167,7 +170,9 @@ def run_print_plotters():
         print be
         bc, bi = np.array(bc), np.array(bi)
         saviz.plot_all_circles(bc[np.argsort(be)], t)
-        modeWalkersFast.append(bi[np.argsort(be)[0]])
+        #modeWalkersFast.append(bi[np.argsort(be)[0]]) #smallest element
+        med = np.floor(len(be)/2)
+        modeWalkersFast.append(bi[np.argsort(be)[med]]) #median element
 
     modeWalkersSlow = []
     for (e,r), t in zip(resA_slow, tCircsA):
@@ -177,7 +182,10 @@ def run_print_plotters():
         print be
         bc, bi = np.array(bc), np.array(bi)
         saviz.plot_all_circles(bc[np.argsort(be)], t)
-        modeWalkersSlow.append(bi[np.argsort(be)[0]])
+        #modeWalkersSlow.append(bi[np.argsort(be)[0]]) #smallest element
+        med = np.floor(len(be)/2)
+        modeWalkersSlow.append(bi[np.argsort(be)[med]]) #median element
+
     #TODO handpick a bin
     #TODO mark bins in a histogram (vertical line?)
 
@@ -193,10 +201,12 @@ def run_print_plotters():
                                           [enData_f.energies[fbi],enData_f.energies[fmi]],
                                           [enData_f.temps[fbi], enData_f.temps[fmi]])
 
+    f8, ax8 = saviz.best_final_energy_walkers([e for e,r in resA_slow])
+    f9, ax9 = saviz.best_final_energy_walkers([e for e,r in resA_fast])
 
     #print 'errors'
-    #beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
-    #beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
+    beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
+    beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
     #TODO latex table format
 
 
