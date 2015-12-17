@@ -6,3 +6,4 @@ test2015*
 testdata-annealing*
 testdata-images/testdata-images-b*
 testdata-shared/testdata-shared-b*
+*.pyc
