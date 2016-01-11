@@ -17,10 +17,12 @@ def plot_circles(circles, ax, gfxLine='g-',gfxCentr='gx'):
     :circles: n x [x, y, r] array
 
     """
-    ax.plot(circles[:,1], circles[:,0], gfxCentr, ms=5, mew=2)
+    # -1 -> adjust for matlab indexing
+
+    ax.plot(circles[:,1] -1, circles[:,0]-1, gfxCentr, ms=5, mew=2)
     rt = np.linspace(0, 2*np.pi)
     for c in xrange(circles.shape[0]):
-        ax.plot(circles[c,2]*np.sin(rt) + circles[c,1], circles[c,2]*np.cos(rt) + circles[c,0], gfxLine, linewidth=2)
+        ax.plot(circles[c,2]*np.sin(rt) + circles[c,1]-1, circles[c,2]*np.cos(rt) + circles[c,0]-1, gfxLine, linewidth=2)
 
 def custom_imshow(dataSet, ax):
     ax.imshow(dataSet, interpolation='none', cmap=plt.cm.gray, origin='lower')
@@ -88,23 +90,33 @@ def plot_datasets_2x3(dataSetsList, descriptors):
     f.tight_layout()
     return f, ax
 
-def plot_3datasets_results(dataSetsList, descriptors,dataResultCircs, targetCirclesList):
+def plot_kdatasets_results(dataSetsList, descriptors,dataResultCircs, targetCirclesList, k):
     """
-    3 datasets in a list
-    2x3: First row data + found, second target + found line gfx
+    k datasets in a list
+    2xk: First row data + found, second target + found line gfx
     """
-    f, ax = plt.subplots(2,3, figsize=(9,6))
-    for i in [0,1,2]:
-        custom_imshow(dataSetsList[i], ax[0,i])
-        plot_circles(dataResultCircs[i], ax[0,i], gfxLine='r-', gfxCentr='rx')
-        ax[0,i].set_xbound(0, 50)
-        ax[0,i].set_ybound(0, 50)
-        ax[0,i].set_title("Kiekkoja: " +str(descriptors[i][0]))
+    if k > 1:
+        f, ax = plt.subplots(2,k, figsize=(3*k,6))
+    else:
+        f, ax = plt.subplots(1,2, figsize=(6,3))
+    for i in np.arange(k):
+        if k > 1:
+            ax0 = ax[0,i]
+            ax1 = ax[1,i]
+        else:
+            ax0 = ax[0]
+            ax1 = ax[1]
+        custom_imshow(dataSetsList[i], ax0)
+        plot_circles(dataResultCircs[i], ax0, gfxLine='r-', gfxCentr='rx')
+        ax0.set_xbound(0, 50)
+        ax0.set_ybound(0, 50)
+        ax0.set_title("Kiekkoja: " +str(descriptors[i][0]))
 
-        plot_circles(dataResultCircs[i], ax[1,i], gfxLine='r-', gfxCentr='rx')
-        plot_circles(targetCirclesList[i], ax[1,i], gfxLine='g--')
-        ax[1,i].set_xbound(0, 50)
-        ax[1,i].set_ybound(0, 50)
+        plot_circles(dataResultCircs[i], ax1, gfxLine='r-', gfxCentr='rx')
+        plot_circles(targetCirclesList[i], ax1, gfxLine='g--')
+        ax1.set_xbound(0, 50)
+        ax1.set_ybound(0, 50)
+        ax1.set_aspect('equal', adjustable='box')
 
     f.tight_layout()
     return f, ax
@@ -112,23 +124,29 @@ def plot_3datasets_results(dataSetsList, descriptors,dataResultCircs, targetCirc
 def best_final_energy_walkers(enDatas, descriptors=None):
     """
     Plot the best final energy as seen function of walkers
-    3 datasets in a list
-    1 x 3 plot of evolution of best final energy
+    k datasets in a list
+    1 x k plot of evolution of best final energy
     """
-    f, ax = plt.subplots(1,3, figsize=(9,4))
-    for i in [0, 1, 2]:
+    k = len(enDatas)
+    f, ax = plt.subplots(1,k, sharey=True, figsize=(3*k,4))
+    for i in np.arange(k):
+        if k > 1:
+            axi = ax[i]
+        else:
+            axi = ax
         finalEnergies = np.array([e[0,-1] for e in enDatas[i].energies])
         bestSFE = np.empty(finalEnergies.shape[0])
         bestSFE[0] = finalEnergies[0]
         for e in np.arange(finalEnergies.shape[0] - 1) + 1:
             bestSFE[e] = min(bestSFE[e-1], finalEnergies[e])
 
-        ax[i].plot(finalEnergies, 'k-', linewidth=1)
-        ax[i].plot(bestSFE, 'b-', linewidth=2)
-        ax[i].set_xlabel('kulkija')
-        ax[i].set_ylabel('E', labelpad=8, rotation=0)
-        #ax[i].set_title('')
-        ax[i].grid(True)
+        axi.plot(finalEnergies, 'k-', linewidth=1)
+        axi.plot(bestSFE, 'b-', linewidth=2)
+        axi.set_xlabel('kulkija')
+        axi.set_ylabel('E', labelpad=8, rotation=0)
+        if descriptors:
+            axi.set_title(descriptors[i])
+        axi.grid(True)
     f.tight_layout()
     return f, ax
 
@@ -160,6 +178,30 @@ def final_energies_histo3(enDatas, descriptors=None):
     f.tight_layout()
     return f, ax
 
+def final_energies_histo(enData, descriptors=None):
+    """
+    Histogram of final energies of walkers in a set
+    histo3 but just 'histo1'
+    """
+    f, ax = plt.subplots(1,1, figsize=(4,4))
+    finalEnergies = np.array([e[0,-1] for e in enData.energies])
+    n, bins, patches = ax.hist(finalEnergies, bins=20, range=(np.min(finalEnergies)-1, np.max(finalEnergies)+1), color='green')
+    fem = np.max(finalEnergies) - np.min(finalEnergies)
+    rou = min(-1, 1 - len(str(int(fem/5))))
+    pr = round(fem/5, rou)
+    ticks =np.arange(round(np.min(finalEnergies)+pr, rou), np.max(finalEnergies)+(pr/4), pr)
+    if np.min(finalEnergies) < ticks[0] - pr:
+        ticks = np.insert(ticks,0, ticks[0] - pr)
+    if np.max(finalEnergies) > ticks[-1] + pr:
+        ticks = np.append(ticks,ticks[-1] + pr)
+    ax.set_xticks(ticks)
+    ax.set_xlabel('E')
+    ax.grid(True)
+
+    ax.set_ylabel('n', labelpad=8, rotation=0)
+    f.tight_layout()
+    return f, ax
+
 def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
     """
     Histogram of final energies of walkers in a set (any number of histograms to compare)
@@ -174,13 +216,13 @@ def final_energies_histo_k_compare(enDatas1, enDatas2,k=1, descriptors=None):
         cmax = np.ceil(max(finalEnergies1.max(), finalEnergies2.max()))
         bw = max(cmax/40, 10)
         bins = np.arange(0, cmax+bw+1, bw)
-        ax[i].hist(finalEnergies1, bins=bins, alpha=0.5)
-        ax[i].hist(finalEnergies2, bins=bins, alpha=0.5)
+        ax[i].hist(finalEnergies1, bins=bins, alpha=0.5, color='blue')
+        ax[i].hist(finalEnergies2, bins=bins, alpha=0.5, color='green')
 
         ax[i].set_xlabel('E')
         ax[i].grid(True)
     ax[0].set_ylabel('n', labelpad=8, rotation=0)
-    ax[2].legend(descriptors, loc='best')
+    ax[k-1].legend(descriptors, loc='best')
 
     f.tight_layout()
     return f, ax
@@ -237,6 +279,66 @@ def walker_temp_compare_1(energies1, temp1, energies2, temp2,
             ax2.plot(temp2[i].squeeze(), label=label)
         else:
             ax2.semilogx(temp2[i].squeeze(), label=label)
+
+    l1 = ax1.legend(loc='best')
+    #l2 = ax2.legend(loc='best')
+    #for legobj in l1.legendHandles + l2.legendHandles:
+    for legobj in l1.legendHandles:
+        legobj.set_linewidth(2.0)
+
+
+    if not logenx:
+        ax1.set_xticks(majorTicks)
+        ax2.set_xticks(majorTicks)
+        ax1.set_xticks(minorTicks, minor=True)
+        ax2.set_xticks(minorTicks, minor=True)
+    ax1.grid(which='minor', alpha=0.2)
+    ax1.grid(which='major', alpha=0.4)
+    ax2.grid(which='minor', alpha=0.2)
+    ax2.grid(which='major', alpha=0.4)
+
+    ax1.set_ylabel('E', labelpad=8, rotation=0)
+    ax2.set_ylabel('t', labelpad=8, rotation=0)
+    ax2.set_xlabel('iter')
+
+    f.tight_layout()
+    return f, [ax1, ax2]
+
+
+def walker_temp(energies, temp, descriptors=[],
+                logeny=True, logenx=True):
+    """
+    Plot walkers on 2x1 plot (similar as above)
+        first pic energies
+        second pic below temps
+    :energies: list of energies to plot
+    :temp: corresponding list of temps
+    :descriptors: corresponding list of labels
+    """
+    f = plt.figure(figsize=(9,6))
+    gs = matplotlib.gridspec.GridSpec(2,1, height_ratios=[2,1])
+    ax1 = f.add_subplot(gs[0])
+    ax2 = f.add_subplot(gs[1])
+
+    ni = np.max([len(e.squeeze()) for e in energies])
+    majorTicks = np.arange(0, ni, 2000)
+    minorTicks = np.arange(0, ni, 500)
+
+    for i, e in enumerate(energies):
+        label = descriptors[i]
+        if logeny and logenx:
+            ax1.loglog(e.squeeze(), label=label)
+        elif logeny and not logenx:
+            ax1.semilogy(e.squeeze(), label=label)
+        elif not logeny and logenx:
+            ax1.semilogx(e.squeeze(), label=label)
+        else:
+            ax1.plot(e.squeeze(), label=label)
+
+        if not logenx:
+            ax2.plot(temp[i].squeeze(), label=label)
+        else:
+            ax2.semilogx(temp[i].squeeze(), label=label)
 
     l1 = ax1.legend(loc='best')
     #l2 = ax2.legend(loc='best')
