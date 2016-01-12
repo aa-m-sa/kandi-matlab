@@ -7,3 +7,5 @@ testdata-annealing*
 testdata-images/testdata-images-b*
 testdata-shared/testdata-shared-b*
 *.pyc
+python/*.eps
+python/*.pdf
