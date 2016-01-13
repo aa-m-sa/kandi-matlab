@@ -320,6 +320,7 @@ def run_print_plotters_3(printfigs=False):
     bestEnergies3_med,  bestEnergyInds3_med,  bestEnergyCircles3_med  = pick_best_energy_results(res3_med)
     bestEnergies3_fast, bestEnergyInds3_fast, bestEnergyCircles3_fast = pick_best_energy_results(res3_fast)
 
+    print tDescs3
     f1, ax1 = saviz.plot_kdatasets_results(tIms3, tDescs3, bestEnergyCircles3_slow, tCircs3, k=2)
     f1.suptitle('0.99', fontsize=12)
     f2, ax2 = saviz.plot_kdatasets_results(tIms3, tDescs3, bestEnergyCircles3_fast, tCircs3, k=2)
@@ -390,6 +391,37 @@ def run_print_plotters_3(printfigs=False):
 
     if not printfigs:
         plt.show()
+
+
+def run_error_stats_3():
+
+    t = saiotools.load_set2_target()
+
+    tIms3, tCircs3, tDescs3 = pick_selected_target_ims(t, sList=selectedTarget3)
+
+    sl = [selectedDataResults3_slow,
+          selectedDataResults3_med,
+          selectedDataResults3_fast]
+
+    res3l = []
+    res3lt = ['0.99','0.94','0.90']
+
+    for s in sl:
+        restmp = pick_nload_selected_all_results(sTargetList=selectedTarget3, sDataResults=s)
+        res3l.append(restmp)
+
+    print "a, Markov no, final e, naive dist err, sym diff err"
+    for res3, a in zip(res3l, res3lt):
+        bestEnergies3_t, bestEnergyInds3_t, bestEnergyCircles3_t = pick_best_energy_results(res3)
+
+        beErrors = get_best_enery_error_rates(bestEnergyCircles3_t, tCircs3, measure=sadistance.naive_dist)
+        beErrors_sd = get_best_enery_error_rates(bestEnergyCircles3_t, tCircs3, measure=sadistance.symmetric_diff)
+        for i, bes in enumerate(beErrors):
+            enData, resData = res3[i]
+            bi = bestEnergyInds3_t[i]
+            mno = enData.markovChainNos[bi][0,-1]
+            print a, mno, bestEnergies3_t[i], bes[0], beErrors_sd[i]
+
 
 
 def run_print_plotters_2(printfigs=False):
@@ -480,6 +512,38 @@ def run_print_plotters_2(printfigs=False):
 
     if not printfigs:
         plt.show()
+
+
+def run_error_stats_2():
+
+    t = saiotools.load_set2_target()
+
+    tIms2, tCircs2, tDescs2 = pick_selected_target_ims(t, sList=selectedTarget2)
+
+    sl = [selectedDataResults2_t99,
+          selectedDataResults2_t98,
+          selectedDataResults2_t96,
+          selectedDataResults2_t94,
+          selectedDataResults2_t90]
+
+    res2l = []
+    res2lt = ['0.99','0.98','0.96','0.94','0.90']
+
+    for s in sl:
+        res2tmp = pick_nload_selected_all_results(sTargetList=selectedTarget2, sDataResults=s)
+        res2l.append(res2tmp)
+
+    print "a, Markov no, final e, naive dist err, sym diff err"
+    for res2, a in zip(res2l, res2lt):
+        bestEnergies2_t, bestEnergyInds2_t, bestEnergyCircles2_t = pick_best_energy_results(res2)
+
+        beErrors = get_best_enery_error_rates(bestEnergyCircles2_t, tCircs2, measure=sadistance.naive_dist)
+        beErrors_sd = get_best_enery_error_rates(bestEnergyCircles2_t, tCircs2, measure=sadistance.symmetric_diff)
+        for i, bes in enumerate(beErrors):
+            enData, resData = res2[i]
+            bi = bestEnergyInds2_t[i]
+            mno = enData.markovChainNos[bi][0,-1]
+            print a, mno, bestEnergies2_t[i], bes[0], beErrors_sd[i]
 
 
 if __name__ == "__main__":
