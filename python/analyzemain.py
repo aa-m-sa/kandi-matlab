@@ -266,6 +266,43 @@ def run_print_plotters_all_A(printfigs=False):
     if not printfigs:
         plt.show()
 
+def run_error_stats_A():
+    """run_print_plotters_all_A eqv. but just stats"""
+
+    t = saiotools.load_set2_target()
+
+    tImsAll, tCircsAll, tDescsAll = pick_selected_target_ims(t)
+
+    tImsA, tCircsA, tDescsA = pick_selected_target_ims(t, sList=selectedTargetSetsA)
+
+    resA_slow = pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_slow)
+    resA_fast = pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_fast)
+
+    bestEnergiesA_slow, bestEnergyIndsA_slow, bestEnergyCirclesA_slow = pick_best_energy_results(resA_slow)
+    bestEnergiesA_fast, bestEnergyIndsA_fast, bestEnergyCirclesA_fast = pick_best_energy_results(resA_fast)
+
+    print "Markov no, final e, naive dist err, sym diff err"
+    beErrors_slow = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.naive_dist)
+    beErrors_slow_sd = get_best_enery_error_rates(bestEnergyCirclesA_slow, tCircsA, measure=sadistance.symmetric_diff)
+    print "A, slow"
+    for i, bes in enumerate(beErrors_slow):
+        enData_s, resData_s = resA_slow[i]
+        bi = bestEnergyIndsA_slow[i]
+        mno = enData_s.markovChainNos[bi][0,-1]
+        print mno, bestEnergiesA_slow[i], bes[0], beErrors_slow_sd[i]
+
+    beErrors_fast = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.naive_dist)
+    beErrors_fast_sd = get_best_enery_error_rates(bestEnergyCirclesA_fast, tCircsA, measure=sadistance.symmetric_diff)
+    print "A, fast"
+    for i, bes in enumerate(beErrors_fast):
+        enData, resData = resA_fast[i]
+        bi = bestEnergyIndsA_fast[i]
+        mno = enData.markovChainNos[bi][0,-1]
+        print mno, bestEnergiesA_fast[i], bes[0], beErrors_fast_sd[i]
+
+
+    return beErrors_slow, beErrors_fast
+
 
 def run_print_plotters_3(printfigs=False):
     """Set 3: compare two pics of three circles"""
