@@ -23,8 +23,8 @@ selectedTarget2 = [(2,13)]
 selectedTarget3 = [(3,1),
                    (3,3)]
 selectedTargetSets =copy.deepcopy(selectedTargetSetsA)
-selectedTargetSets.extend(selectedTarget2)
-selectedTargetSets.extend(selectedTarget3)
+selectedTargetSets.extend(copy.deepcopy(selectedTarget2))
+selectedTargetSets.extend(copy.deepcopy(selectedTarget3))
 
 selectedBasedirname = '../testdata-annealingset2b-50x50-'
 selectedDataResultsA_slow = 't99-n1000'
@@ -46,7 +46,7 @@ def pick_selected_target_ims(targetData, sList=selectedTargetSets):
     for c, p in sList:
         selected.append(targetData[c].dataSets[p-1])
         selectedCirc.append(targetData[c].targets[p-1])
-    return selected, selectedCirc, selectedTargetSets
+    return selected, selectedCirc, sList
 
 def pick_nload_selected_all_results(sTargetList=selectedTargetSetsA, sDataResults=selectedDataResultsA_slow):
     res = []
