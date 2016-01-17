@@ -73,8 +73,18 @@ def plot_targets_1(circles, dataSet):
     f.tight_layout()
     return f, ax
 
+def plot_dataset(dataSet):
+    """
+    Plots one noisy data pic
+
+    """
+    f, ax = plt.subplots(1,1, figsize=(6,6))
+    custom_imshow(dataSet, ax)
+    f.tight_layout()
+    return f, ax
+
 def plot_datasets_2x3(dataSetsList, descriptors):
-    """g
+    """
     Plot 2x3 target noisy pics.
     """
     f, ax = plt.subplots(2,3, figsize=(9,6))

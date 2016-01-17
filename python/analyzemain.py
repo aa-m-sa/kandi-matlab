@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Script. Analyze and plot all
+Script. Analyze all results and plot all related plots
 """
 
 import numpy as np

@@ -6,9 +6,9 @@ close all;
 N = 50
 
 % plots: golf-hole, naive energy function
-plots = 1
+%plots = 1
 
-%plots = 2 % naive and adapted energy fun, demonstrate local mins
+plots = 2 % naive and adapted energy fun, demonstrate local mins
 
 if plots == 1
     x = 25
@@ -20,7 +20,7 @@ if plots == 1
     clf;
 
     A_data = createdataimage(x, y, r, N, N);
-    save('golfholedata', 'A_data')
+    save('-v6','golfholedata.mat', 'A_data')
     imagesc(A_data)
     colormap(gray)
     axis("image", "off", "nolabel")
@@ -101,7 +101,7 @@ elseif plots == 2
     clf;
 
     A_data = createdataimage(x, y, r, N, N);
-    save('localmindata', 'A_data')
+    save('-v6', 'localmindata.mat', 'A_data')
     imagesc(A_data)
     colormap(gray)
     %axis("image", "off", "nolabel")
