@@ -45,28 +45,20 @@ nopeasti ympyrämatriisit luodaan eri `circle.m` toteutuksilla
 
 * `energyplotter.m` plottaa energiafunktion arvoja eri paremetreilla
 
-## Formaalit testiskenaariot
+## Annealing-skenaariot
 
-* perusbranch `master`
+* `annealing.m` -> SA algo-funktio
 
-* jokaiselle skenaarion valmistelulle (`annealing.m`:n muokkaus) oma
-git-branch; kun testi valmis ajettevaksi ukko-klusterilla -> merge upstream
+* `runannealing.m` -> funktio tyypilliseen SA:n ajamiseen (tallentaa datat, jotain alustavia kuvia)
 
-* jokaisella skenaariolla nimi: `runannealing(insertdescriptivename)`
-    * ajettava skripti: `runannealing(name).m`
-    * jokainen kutsuu `runannealing.m` sopivin parametrein, joka
-        * ajaa annealing ensemblen valitulla datalla
-        * tallentaa tulokset (plottaukset, jne)  kansioon `testdata-annealing(name)`
-    * skenaarion kuvaus (mitä ko. versio algoritmista tekee;
-    jäähdytysskenaariot, alkulämpötilat, jne): `runannealing(name).md`
-    (jos tarpeen; yleensä .m -skripti ihan riittävän selkeä sinänsä)
+* `runannealingbasicf.m, run_all2.m` etc -> käyttävät runannealing.m eri testidata-filujen ajamiseen
 
 * skenaariolle yhteiset testidatat kansiossa `testdata-shared`
     * sarja valmiiksi generoituja testikuvia
     * testikuvat jne. kansiossa `testdata-images`
-    * eri annealing-versioita (= skenaariot) kokeillaan samalle testidatalle ->
-    vertailukelpoisuus
-    * eri testidatat generoidaan skripteillä `preparetestdata.m` jne
+    * eri annealing-versioita (= skenaariot) voidaan kokeilla samalle testidatalle ->
+    periaatteessa vertailukelpoisuus
+    * eri testidatat yms tarpeellinen generoidaan skripteillä `preparetestdata.m` jne
 
 * skriptit kaikkien samaan dataan liittyvien skenaarioiden ajamiseksi nimetty
 `runall.m` tjsp
